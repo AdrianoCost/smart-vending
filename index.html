@@ -75,8 +75,8 @@
             justify-content: space-between;
             gap: 16px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-            z-index: 10; /* Garante que fica acima de tudo */
-            flex-shrink: 0; /* Impede de ser esmagado */
+            z-index: 10;
+            flex-shrink: 0;
         }
 
         header .logo-area {
@@ -148,22 +148,19 @@
             gap: 10px;
             padding: 12px 20px;
             border-bottom: 1px solid var(--border);
-            flex-shrink: 0; /* Fica fixo no topo, não rola com os produtos */
+            flex-shrink: 0; 
             
-            /* Configurações para arrastar no celular */
             overflow-x: auto;
             overflow-y: hidden;
-            -webkit-overflow-scrolling: touch; /* Rolagem suave no iOS */
-            scrollbar-width: none; /* Esconde a barra de rolagem no Firefox */
+            -webkit-overflow-scrolling: touch; 
+            scrollbar-width: none; 
         }
 
-        /* Esconde a barra de rolagem no Chrome/Safari/Edge */
         .categorias-bar::-webkit-scrollbar {
             display: none;
         }
 
         .cat-tab {
-            /* Removido o flex: 1 para que os botões não fiquem esmagados */
             background: #f3f4f6;
             border: 2px solid transparent;
             color: var(--text-dark);
@@ -172,14 +169,12 @@
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            white-space: nowrap; /* Impede que o texto quebre em duas linhas */
+            white-space: nowrap; 
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
             min-height: 56px;
-            
-            /* Impede que os botões encolham, forçando a rolagem lateral */
             flex-shrink: 0; 
         }
 
@@ -245,9 +240,13 @@
             font-weight: 600;
         }
 
+        /* ============================================
+           GRID DE PRODUTOS 
+           ============================================ */
         .grid-produtos {
+            /* Força 2 colunas no celular independentemente da largura */
+            grid-template-columns: repeat(2, 1fr);
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 16px;
         }
 
@@ -804,16 +803,18 @@
             header .logo-text .subtitulo { font-size: 14px; }
             
             .categorias-bar { padding: 14px 28px; gap: 12px; }
-            /* No tablet, as abas podem crescer para preencher a tela se houver espaço */
             .cat-tab { flex: 1; padding: 16px 20px; font-size: 17px; min-height: 60px; }
             .cat-tab .cat-icone { font-size: 28px; }
 
             .conteudo-produtos { padding: 24px 32px calc(var(--carrinho-h) + 28px) 32px; }
             .categoria-titulo h2 { font-size: 30px; }
+            
+            /* Em tablets, podemos voltar para o auto-fill para aproveitar melhor a tela */
             .grid-produtos {
                 grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
                 gap: 20px;
             }
+            
             .produto-card .img-area { height: 140px; font-size: 72px; }
             .produto-card .nome { font-size: 17px; }
             .produto-card .preco { font-size: 22px; }
