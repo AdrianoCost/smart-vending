@@ -3,179 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Maison Burger — Totem de Autoatendimento</title>
+  <title>Burger Express — Totem de Autoatendimento</title>
 
-  <!-- Google Fonts: Poppins (pesos 400, 500, 600, 700, 800) -->
+  <!-- Fontes modernas e altamente legíveis para tela touch -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet" />
 
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandRed: '#DA291C',
+            brandRedDark: '#B31F14',
+            brandYellow: '#FFC72C',
+            brandYellowDark: '#E5AE12',
+            brandGreen: '#16A34A',
+            brandGreenDark: '#15803D',
+            surface: '#F8F9FA',
+          },
+          fontFamily: {
+            display: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          boxShadow: {
+            card: '0 8px 24px -6px rgba(15, 23, 42, 0.08)',
+            floating: '0 -8px 30px rgba(15, 23, 42, 0.12)',
+          }
+        }
+      }
+    };
+  </script>
 
   <style>
-    /* =====================================================================
-       IDENTIDADE VISUAL OFICIAL (:root)
-    ====================================================================== */
-    :root {
-      --fundo-logo-vermelho: radial-gradient(circle at 35% 30%, #9c000e 0%, #6b0008 48%, #2b0003 100%);
-      --dourado-base: #ccae62;
-      --gradiente-dourado: linear-gradient(90deg, #8c6d3f 0%, #caae65 50%, #8c6d3f 100%);
-      --fonte-principal: 'Poppins', sans-serif;
-
-      --bg: #f8fafd;
-      --surface: #ffffff;
-      --surface-alt: #f4f1ea;
-      --primary: var(--dourado-base);
-      --primary-dark: #8c6d3f;
-      --primary-container: #f5ecd4;
-      --on-primary-container: #4a3719;
-      --success: #188038;
-      --success-bg: #e6f4ea;
-      --warning-bg: #fef7e0;
-      --warning-text: #b06000;
-      --danger-bg: #fce8e6;
-      --danger-text: #c5221f;
-      --text-dark: #1f1f1f;
-      --text-muted: #5f6368;
-      --border: #e2dcd0;
-      --shadow-sm: 0 1px 2px rgba(60, 64, 67, 0.12), 0 1px 3px 1px rgba(60, 64, 67, 0.08);
-      --shadow-md: 0 4px 12px rgba(60, 64, 67, 0.16);
-    }
-
-    /* Configurações globais de tipografia e toque */
-    * {
-      font-family: var(--fonte-principal);
-      box-sizing: border-box;
-    }
-
+    /* Ajustes finos de UX de Totem Touch */
     html, body {
-      background-color: var(--bg);
-      color: var(--text-dark);
+      font-family: 'Inter', sans-serif;
+      background-color: #F8F9FA;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
 
-    /* Classes utilitárias ligadas diretamente às variáveis CSS */
-    .bg-crimson-radial {
-      background: var(--fundo-logo-vermelho);
+    h1, h2, h3, .font-display {
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
     }
 
-    .bg-gold-gradient {
-      background: var(--gradiente-dourado);
-    }
-
-    .bg-app { background-color: var(--bg); }
-    .bg-surface { background-color: var(--surface); }
-    .bg-surface-alt { background-color: var(--surface-alt); }
-    .bg-primary-container { background-color: var(--primary-container); }
-
-    .text-dark { color: var(--text-dark); }
-    .text-muted { color: var(--text-muted); }
-    .text-gold { color: var(--dourado-base); }
-    .text-primary-dark { color: var(--primary-dark); }
-    .text-on-primary { color: var(--on-primary-container); }
-
-    .border-theme { border-color: var(--border); }
-    .border-gold { border-color: var(--dourado-base); }
-
-    .shadow-theme-sm { box-shadow: var(--shadow-sm); }
-    .shadow-theme-md { box-shadow: var(--shadow-md); }
-
-    /* Badges semânticos */
-    .badge-success {
-      background-color: var(--success-bg);
-      color: var(--success);
-    }
-    .badge-warning {
-      background-color: var(--warning-bg);
-      color: var(--warning-text);
-    }
-    .badge-danger {
-      background-color: var(--danger-bg);
-      color: var(--danger-text);
-    }
-    .badge-gold {
-      background-color: var(--primary-container);
-      color: var(--on-primary-container);
-      border: 1px solid var(--dourado-base);
-    }
-
-    /* Botão principal dourado metálico */
-    .btn-gold {
-      background: var(--gradiente-dourado);
-      color: #ffffff;
-      text-shadow: 0 1px 2px rgba(43, 0, 3, 0.35);
-      box-shadow: var(--shadow-md);
-      transition: transform 0.14s ease, filter 0.14s ease, opacity 0.14s ease;
-    }
-    .btn-gold:hover:not(:disabled) {
-      filter: brightness(1.06);
-    }
-    .btn-gold:active:not(:disabled) {
-      transform: scale(0.97);
-    }
-    .btn-gold:disabled {
-      background: #d5cfc3;
-      color: #ffffff;
-      text-shadow: none;
-      box-shadow: none;
-      cursor: not-allowed;
-    }
-
-    /* Botão secundário de perigo/cancelamento */
-    .btn-danger-soft {
-      background-color: var(--danger-bg);
-      color: var(--danger-text);
-      transition: transform 0.14s ease, filter 0.14s ease;
-    }
-    .btn-danger-soft:hover {
-      filter: brightness(0.96);
-    }
-    .btn-danger-soft:active {
-      transform: scale(0.97);
-    }
-
-    /* Categoria ativa na barra lateral */
-    .cat-btn-active {
-      background-color: var(--primary-container);
-      border: 2px solid var(--dourado-base);
-      color: var(--on-primary-container);
-      box-shadow: var(--shadow-sm);
-    }
-    .cat-btn-idle {
-      background-color: var(--surface);
-      border: 2px solid transparent;
-      color: var(--text-muted);
-    }
-    .cat-btn-idle:hover {
-      background-color: var(--surface-alt);
-      color: var(--text-dark);
-    }
-
-    /* Cartão de produto com elevação suave */
-    .product-card {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
-      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
-    }
-    .product-card:hover {
-      border-color: var(--dourado-base);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-2px);
-    }
-    .product-card:active {
-      transform: scale(0.98);
-    }
-
-    /* Container visual elegante para ilustrações SVG */
-    .art-stage {
-      background: radial-gradient(circle at 50% 45%, #ffffff 0%, var(--surface-alt) 100%);
-      border-bottom: 1px solid var(--border);
-    }
-
-    /* Barras de rolagem sutis */
+    /* Barras de rolagem discretas para visual de quiosque */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -184,200 +60,178 @@
       background: transparent;
     }
     ::-webkit-scrollbar-thumb {
-      background: var(--border);
+      background: #CBD5E1;
       border-radius: 9999px;
     }
 
-    /* Animações */
-    @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(14px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+    /* Animações suaves de entrada */
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
     }
     .animate-modal {
-      animation: fadeSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: fadeInScale 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    @keyframes floatSlow {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-6px); }
+    @keyframes pulseSoft {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
     }
-    .animate-float {
-      animation: floatSlow 3.4s ease-in-out infinite;
+    .animate-pulse-soft {
+      animation: pulseSoft 2.4s ease-in-out infinite;
     }
   </style>
 </head>
-<body class="bg-app text-dark min-h-screen overflow-x-hidden">
+<body class="bg-surface text-slate-900 min-h-screen overflow-x-hidden">
 
   <!-- =====================================================================
-       1. TELA INICIAL (BOAS-VINDAS / SELEÇÃO DE CONSUMO)
+       TELA 1: TELA INICIAL (DESCANSO / BOAS-VINDAS)
   ====================================================================== -->
-  <section id="screen-welcome" class="min-h-screen flex flex-col justify-between relative overflow-hidden bg-crimson-radial text-white">
-    <!-- Brilhos dourados sutis ao fundo -->
-    <div class="absolute -top-28 -right-24 w-96 h-96 rounded-full opacity-15 blur-3xl pointer-events-none" style="background: var(--dourado-base);"></div>
-    <div class="absolute -bottom-32 -left-24 w-[28rem] h-[28rem] rounded-full opacity-10 blur-3xl pointer-events-none" style="background: var(--dourado-base);"></div>
+  <section id="screen-welcome" class="min-h-screen flex flex-col justify-between relative overflow-hidden bg-brandRed text-white">
+    <!-- Elementos decorativos de fundo -->
+    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-brandYellow opacity-20 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -left-24 w-[28rem] h-[28rem] rounded-full bg-black opacity-15 blur-3xl pointer-events-none"></div>
 
-    <!-- Barra Superior da Tela Inicial -->
+    <!-- Cabeçalho da marca -->
     <header class="relative z-10 flex items-center justify-between px-6 sm:px-10 pt-6 sm:pt-8">
       <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-xl bg-gold-gradient flex items-center justify-center shadow-theme-md border border-white/20">
-          <!-- Emblema Coroa/Burger SVG -->
-          <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M5 16L3 7l5.5 4L12 5l3.5 6L21 7l-2 9H5zm0 2h14v2H5v-2z"/>
-          </svg>
+        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-brandYellow text-brandRed flex items-center justify-center font-display font-black text-2xl sm:text-3xl shadow-lg">
+          B
         </div>
         <div>
-          <span class="font-extrabold text-lg sm:text-xl tracking-wide block leading-none">MAISON BURGER</span>
-          <span class="text-[11px] sm:text-xs tracking-widest uppercase" style="color: var(--dourado-base);">Craft Fast Food</span>
+          <span class="font-display font-black text-xl sm:text-2xl tracking-tight block leading-none">BURGER EXPRESS</span>
+          <span class="text-xs sm:text-sm text-red-100 font-medium">Autoatendimento Rápido</span>
         </div>
       </div>
-
-      <div class="px-4 py-2 rounded-full bg-black/25 border border-white/15 backdrop-blur-sm text-xs font-semibold flex items-center gap-2">
-        <span class="w-2.5 h-2.5 rounded-full animate-pulse" style="background-color: #4ade80;"></span>
-        <span>Totem #01 • Pronto</span>
+      <div class="px-4 py-2 rounded-full bg-white/15 backdrop-blur-sm text-xs sm:text-sm font-semibold flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-brandYellow animate-pulse"></span>
+        Totem #01 • Online
       </div>
     </header>
 
-    <!-- Conteúdo Central -->
-    <main class="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-8 text-center max-w-4xl mx-auto w-full">
-      <!-- Emblema Principal Dourado -->
-      <div class="mb-6 animate-float">
-        <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-black/25 border-2 flex items-center justify-center shadow-2xl mx-auto p-4" style="border-color: var(--dourado-base);">
-          <svg viewBox="0 0 96 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg" aria-label="Logo Maison Burger">
-            <defs>
-              <linearGradient id="logoGold" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#8c6d3f"/>
-                <stop offset="50%" stop-color="#f0d999"/>
-                <stop offset="100%" stop-color="#8c6d3f"/>
-              </linearGradient>
-            </defs>
-            <!-- Pão superior -->
-            <path d="M16 44 C16 24, 80 24, 80 44 Z" fill="url(#logoGold)" />
-            <circle cx="36" cy="34" r="2.2" fill="#4a3719" opacity="0.6"/>
-            <circle cx="50" cy="31" r="2.2" fill="#4a3719" opacity="0.6"/>
-            <circle cx="62" cy="35" r="2.2" fill="#4a3719" opacity="0.6"/>
-            <!-- Queijo derretido -->
-            <path d="M14 48 H82 L75 56 L64 51 L52 57 L40 51 L26 56 Z" fill="#f5ecd4" />
-            <!-- Carne artesanal -->
-            <rect x="15" y="54" width="66" height="11" rx="5.5" fill="#4a1c17" stroke="url(#logoGold)" stroke-width="2" />
-            <!-- Pão inferior -->
-            <path d="M18 68 H78 C78 76, 72 80, 64 80 H32 C24 80, 18 76, 18 68 Z" fill="url(#logoGold)" />
-          </svg>
+    <!-- Destaque Promocional Central -->
+    <main class="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-6 text-center max-w-4xl mx-auto w-full">
+      <div class="inline-flex items-center gap-2 bg-brandYellow text-slate-900 font-display font-extrabold text-xs sm:text-sm uppercase tracking-wider px-4 py-1.5 rounded-full shadow-md mb-5">
+        🔥 Destaque do Dia • Edição Limitada
+      </div>
+
+      <h1 class="font-display font-black text-4xl sm:text-6xl leading-tight tracking-tight mb-3 drop-shadow-sm">
+        Duplo Cheddar Supreme
+      </h1>
+      <p class="text-red-100 text-base sm:text-xl max-w-xl mb-6 font-medium">
+        Dois hambúrgueres grelhados no fogo, queijo cheddar cremoso, bacon crocante e molho especial.
+      </p>
+
+      <!-- Card visual do lanche em destaque -->
+      <div class="relative mb-8 sm:mb-10 animate-pulse-soft">
+        <div class="w-64 h-44 sm:w-80 sm:h-56 rounded-3xl overflow-hidden shadow-2xl border-4 border-brandYellow bg-slate-900">
+          <img
+            src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80"
+            alt="Duplo Cheddar Supreme"
+            class="w-full h-full object-cover"
+            onerror="this.src='https://placehold.co/800x560/1E293B/FFC72C?text=Duplo+Cheddar+Supreme'"
+          />
+        </div>
+        <div class="absolute -bottom-4 -right-4 bg-brandYellow text-slate-900 rounded-2xl px-4 py-2 shadow-xl border-2 border-white">
+          <span class="block text-[11px] font-bold uppercase leading-none">Combo a partir de</span>
+          <span class="font-display font-black text-2xl sm:text-3xl leading-tight">R$ 36,90</span>
         </div>
       </div>
 
-      <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold tracking-wider uppercase mb-4 bg-black/25 border" style="border-color: var(--dourado-base); color: var(--dourado-base);">
-        ★ Autoatendimento Exclusivo
-      </span>
-
-      <h1 class="font-extrabold text-3xl sm:text-5xl lg:text-6xl leading-tight tracking-tight mb-3">
-        Sabor Artesanal,<br class="hidden sm:inline" />
-        <span style="color: var(--dourado-base);">Pedido em Segundos</span>
-      </h1>
-
-      <p class="text-white/80 text-sm sm:text-lg max-w-xl mb-10 font-normal">
-        Monte seu lanche do seu jeito, pague direto na tela com Pix ou Cartão e acompanhe sua senha no balcão.
-      </p>
-
-      <!-- Dois Grandes Botões Táteis -->
+      <!-- Pergunta e Botões Touch Gigantes -->
       <div class="w-full max-w-2xl">
-        <p class="text-sm sm:text-base font-semibold text-white/90 mb-4">
-          Como deseja aproveitar seu pedido hoje?
+        <p class="font-display font-bold text-lg sm:text-2xl mb-4 text-white/95">
+          Toque abaixo para iniciar seu pedido:
         </p>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <button
             onclick="startOrder('Comer Aqui')"
-            class="group bg-surface text-dark rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-transparent hover:border-[#ccae62] active:scale-95 transition-all duration-150 flex flex-col items-center justify-center gap-3 cursor-pointer"
+            class="group bg-white hover:bg-amber-50 active:scale-95 transition-all duration-150 text-slate-900 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col items-center justify-center gap-3 border-4 border-transparent hover:border-brandYellow cursor-pointer"
           >
-            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary-container border border-gold flex items-center justify-center text-4xl group-hover:scale-105 transition-transform">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-red-50 text-brandRed flex items-center justify-center text-4xl sm:text-5xl group-hover:scale-110 transition-transform">
               🍽️
             </div>
-            <span class="font-extrabold text-2xl sm:text-3xl text-dark">Comer Aqui</span>
-            <span class="text-xs sm:text-sm text-muted font-medium">Servido na bandeja no salão</span>
+            <span class="font-display font-black text-2xl sm:text-3xl text-slate-900">Comer Aqui</span>
+            <span class="text-sm text-slate-500 font-medium">Servido na bandeja no salão</span>
           </button>
 
           <button
             onclick="startOrder('Para Viagem')"
-            class="group btn-gold rounded-3xl p-6 sm:p-8 border-2 border-white/30 flex flex-col items-center justify-center gap-3 cursor-pointer"
+            class="group bg-brandYellow hover:bg-brandYellowDark active:scale-95 transition-all duration-150 text-slate-900 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col items-center justify-center gap-3 border-4 border-white/60 cursor-pointer"
           >
-            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/35 flex items-center justify-center text-4xl group-hover:scale-105 transition-transform">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/80 text-brandRed flex items-center justify-center text-4xl sm:text-5xl group-hover:scale-110 transition-transform">
               🛍️
             </div>
-            <span class="font-extrabold text-2xl sm:text-3xl text-white">Para Viagem</span>
-            <span class="text-xs sm:text-sm text-white/90 font-medium">Embalagem térmica para levar</span>
+            <span class="font-display font-black text-2xl sm:text-3xl text-slate-900">Para Viagem</span>
+            <span class="text-sm text-slate-800 font-medium">Embalado para levar</span>
           </button>
         </div>
       </div>
     </main>
 
-    <!-- Rodapé -->
-    <footer class="relative z-10 text-center pb-6 px-4 text-xs sm:text-sm text-white/75 font-medium">
-      Aceitamos <strong class="text-white">Pix (QR Code na tela)</strong> e <strong class="text-white">Cartão de Crédito / Débito</strong>
+    <!-- Rodapé informativo -->
+    <footer class="relative z-10 text-center pb-5 px-4 text-xs sm:text-sm text-red-100/90 font-medium">
+      Aceitamos Pix (QR Code na tela), Cartão de Débito e Crédito
     </footer>
   </section>
 
 
   <!-- =====================================================================
-       2. TELA DE CARDÁPIO (TOP BAR + CATEGORIAS + GRADE + BARRA DO CARRINHO)
+       TELA 2: CARDÁPIO PRINCIPAL (CATEGORIAS + GRADE + BARRA DO CARRINHO)
   ====================================================================== -->
-  <section id="screen-menu" class="hidden min-h-screen flex flex-col bg-app">
-    <!-- Top Bar em var(--fundo-logo-vermelho) -->
-    <header class="sticky top-0 z-30 bg-crimson-radial text-white px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between shadow-theme-md border-b-2" style="border-color: var(--dourado-base);">
+  <section id="screen-menu" class="hidden min-h-screen flex flex-col bg-surface">
+    <!-- Barra Superior Discreta -->
+    <header class="sticky top-0 z-30 bg-white border-b border-slate-200 px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between shadow-sm">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gold-gradient flex items-center justify-center shadow-md shrink-0">
-          <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M5 16L3 7l5.5 4L12 5l3.5 6L21 7l-2 9H5zm0 2h14v2H5v-2z"/>
-          </svg>
+        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-brandRed text-brandYellow flex items-center justify-center font-display font-black text-xl shadow">
+          B
         </div>
         <div>
-          <h2 class="font-extrabold text-base sm:text-xl tracking-wide leading-none">MAISON BURGER</h2>
-          <!-- Indicador clicável do tipo de consumo -->
+          <h2 class="font-display font-black text-base sm:text-xl text-slate-900 leading-none">BURGER EXPRESS</h2>
           <button
             onclick="toggleConsumptionMode()"
-            title="Toque para alternar entre Comer Aqui e Para Viagem"
-            class="mt-1 inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold px-2.5 py-0.5 rounded-full bg-black/30 hover:bg-black/45 border transition cursor-pointer"
-            style="border-color: var(--dourado-base); color: var(--primary-container);"
+            title="Toque para alternar o tipo de consumo"
+            class="mt-1 inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-brandRed bg-red-50 hover:bg-red-100 px-2.5 py-0.5 rounded-full transition"
           >
             <span id="badge-mode-icon">🍽️</span>
             <span id="badge-mode-text">Comer Aqui</span>
-            <span class="opacity-75 text-[10px]">• trocar</span>
+            <span class="text-[10px] text-red-400 font-semibold ml-0.5">(trocar)</span>
           </button>
         </div>
       </div>
 
       <button
         onclick="requestResetOrder()"
-        class="px-3.5 sm:px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 border border-white/20 text-white font-semibold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer"
+        class="px-3.5 sm:px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer"
       >
-        <span>✕</span>
-        <span>Cancelar / Início</span>
+        <span>↺</span>
+        <span>Reiniciar</span>
       </button>
     </header>
 
-    <!-- Layout Principal: Sidebar Esquerda + Grid Central -->
+    <!-- Corpo: Menu Lateral de Categorias + Grade Central -->
     <div class="flex-1 flex flex-col md:flex-row pb-28">
-      <!-- Menu Lateral Esquerdo de 5 Categorias -->
-      <aside class="w-full md:w-52 lg:w-60 bg-surface border-b md:border-b-0 md:border-r border-theme md:sticky md:top-20 md:h-[calc(100vh-5rem-5.75rem)] overflow-x-auto md:overflow-y-auto shrink-0">
-        <div class="hidden md:block px-4 pt-5 pb-2">
-          <span class="text-[11px] font-bold uppercase tracking-widest text-muted">Categorias</span>
-        </div>
-        <nav id="category-nav" class="flex md:flex-col p-3 gap-2">
+      <!-- Sidebar Fixa de Categorias (Horizontal no mobile, Vertical no tablet/desktop) -->
+      <aside class="w-full md:w-44 lg:w-52 bg-white border-b md:border-b-0 md:border-r border-slate-200 md:sticky md:top-20 md:h-[calc(100vh-5rem-6.5rem)] overflow-x-auto md:overflow-y-auto shrink-0">
+        <nav id="category-nav" class="flex md:flex-col p-2.5 sm:p-3 gap-2">
           <!-- Renderizado via JS -->
         </nav>
       </aside>
 
-      <!-- Grade de Produtos -->
+      <!-- Área Principal de Produtos -->
       <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto w-full">
-        <div class="flex flex-wrap items-end justify-between gap-2 mb-6">
+        <div class="flex items-center justify-between mb-5">
           <div>
-            <h1 id="current-category-title" class="font-extrabold text-2xl sm:text-3xl text-dark leading-tight">Lanches</h1>
-            <p id="current-category-subtitle" class="text-xs sm:text-sm text-muted mt-0.5">Toque para personalizar ou adicionar ao seu pedido</p>
+            <h1 id="current-category-title" class="font-display font-black text-2xl sm:text-3xl text-slate-900">Combos</h1>
+            <p id="current-category-subtitle" class="text-sm text-slate-500 mt-0.5">Toque em um item para personalizar ou adicionar</p>
           </div>
-          <span id="current-category-count" class="px-3.5 py-1 rounded-full badge-gold font-semibold text-xs">
-            0 opções
+          <span id="current-category-count" class="px-3 py-1 rounded-full bg-slate-200/80 text-slate-700 font-bold text-xs sm:text-sm">
+            0 itens
           </span>
         </div>
 
+        <!-- Grade de Produtos -->
         <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <!-- Renderizado via JS -->
         </div>
@@ -385,41 +239,38 @@
     </div>
 
     <!-- Barra Inferior Fixa do Carrinho -->
-    <footer class="fixed bottom-0 inset-x-0 z-30 bg-surface border-t-2 border-theme shadow-theme-md px-4 sm:px-8 py-3.5">
+    <footer class="fixed bottom-0 inset-x-0 z-30 bg-white border-t border-slate-200 shadow-floating px-4 sm:px-8 py-3.5 sm:py-4">
       <div class="max-w-7xl mx-auto flex flex-wrap sm:flex-nowrap items-center justify-between gap-3">
-        <!-- Quantidade e Subtotal -->
-        <div class="flex items-center gap-3.5">
-          <div class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-primary-container border border-gold flex items-center justify-center text-2xl">
+        <!-- Resumo de quantidade e valor -->
+        <div class="flex items-center gap-3 sm:gap-4">
+          <div class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-50 border border-brandYellow/50 flex items-center justify-center text-2xl sm:text-3xl">
             🛒
             <span
               id="cart-count-badge"
-              class="absolute -top-2 -right-2 min-w-[26px] h-[26px] px-1.5 rounded-full bg-crimson-radial text-white font-bold text-xs flex items-center justify-center border border-[#ccae62] shadow-sm"
+              class="absolute -top-2 -right-2 min-w-[26px] h-[26px] px-1.5 rounded-full bg-brandRed text-white font-display font-black text-xs flex items-center justify-center shadow"
             >
               0
             </span>
           </div>
           <div>
-            <span class="block text-[11px] font-semibold uppercase tracking-wider text-muted">Subtotal do Pedido</span>
-            <span id="cart-total-display" class="font-extrabold text-2xl sm:text-3xl text-dark">R$ 0,00</span>
+            <span class="block text-xs text-slate-500 font-semibold uppercase tracking-wide">Total do Pedido</span>
+            <span id="cart-total-display" class="font-display font-black text-2xl sm:text-3xl text-slate-900">R$ 0,00</span>
           </div>
         </div>
 
-        <!-- Botões Limpar + Ver Pedido / Finalizar -->
+        <!-- Ações da barra inferior -->
         <div class="flex items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
           <button
-            id="btn-clear-cart"
-            onclick="requestClearCart()"
-            disabled
-            class="flex-1 sm:flex-none px-4 sm:px-6 py-3.5 sm:py-4 rounded-2xl btn-danger-soft disabled:opacity-40 disabled:cursor-not-allowed font-bold text-sm sm:text-base cursor-pointer"
+            onclick="requestResetOrder()"
+            class="flex-1 sm:flex-none px-4 sm:px-6 py-3.5 sm:py-4 rounded-2xl bg-slate-100 hover:bg-red-50 hover:text-brandRed active:scale-95 text-slate-700 font-bold text-sm sm:text-base transition cursor-pointer"
           >
-            Limpar
+            Cancelar
           </button>
-
           <button
             id="btn-open-cart"
             onclick="openCartModal()"
             disabled
-            class="flex-[2] sm:flex-none px-6 sm:px-10 py-3.5 sm:py-4 rounded-2xl btn-gold font-bold text-sm sm:text-base flex items-center justify-center gap-2 cursor-pointer"
+            class="flex-[2] sm:flex-none px-6 sm:px-10 py-3.5 sm:py-4 rounded-2xl bg-brandGreen hover:bg-brandGreenDark disabled:bg-slate-300 disabled:cursor-not-allowed active:scale-95 text-white font-display font-extrabold text-base sm:text-lg shadow-lg transition flex items-center justify-center gap-2 cursor-pointer"
           >
             <span>Ver Pedido / Finalizar</span>
             <span>→</span>
@@ -431,89 +282,89 @@
 
 
   <!-- =====================================================================
-       5. TELA DE PAGAMENTO (PIX QR CODE + CARTÃO)
+       TELA 5: PAGAMENTO (PIX QR CODE + CARTÃO)
   ====================================================================== -->
-  <section id="screen-payment" class="hidden min-h-screen flex flex-col bg-app">
-    <header class="bg-crimson-radial text-white px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between shadow-theme-md border-b-2" style="border-color: var(--dourado-base);">
+  <section id="screen-payment" class="hidden min-h-screen flex flex-col bg-surface">
+    <header class="bg-white border-b border-slate-200 px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between shadow-sm">
       <button
         onclick="backToMenuFromPayment()"
-        class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 border border-white/20 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
+        class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold text-sm flex items-center gap-2 cursor-pointer"
       >
-        ← Voltar ao Cardápio
+        ← Voltar ao Pedido
       </button>
-      <span class="font-extrabold text-lg sm:text-xl tracking-wide">Pagamento</span>
-      <span id="payment-mode-badge" class="text-xs font-semibold px-3 py-1 rounded-full bg-black/30 border" style="border-color: var(--dourado-base); color: var(--primary-container);">
-        🍽️ Comer Aqui
-      </span>
+      <span class="font-display font-black text-lg sm:text-xl text-slate-900">Pagamento</span>
+      <div class="w-24 sm:w-32 text-right">
+        <span id="payment-mode-badge" class="text-xs font-bold text-brandRed bg-red-50 px-3 py-1 rounded-full">Comer Aqui</span>
+      </div>
     </header>
 
     <main class="flex-1 max-w-3xl mx-auto w-full p-4 sm:p-8 flex flex-col justify-center">
-      <!-- Cartão Resumo do Valor -->
-      <div class="bg-surface rounded-3xl p-6 shadow-theme-sm border border-theme text-center mb-6">
-        <span class="text-xs font-bold uppercase tracking-widest text-muted">Total a Pagar</span>
-        <div id="payment-total-amount" class="font-extrabold text-4xl sm:text-5xl text-dark mt-1">R$ 0,00</div>
-        <p id="payment-items-summary" class="text-xs sm:text-sm text-muted mt-1">0 itens no pedido</p>
+      <!-- Resumo de Valor -->
+      <div class="bg-white rounded-3xl p-6 shadow-card border border-slate-100 text-center mb-6">
+        <span class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">Valor Total a Pagar</span>
+        <div id="payment-total-amount" class="font-display font-black text-4xl sm:text-5xl text-slate-900 mt-1">R$ 0,00</div>
+        <p id="payment-items-summary" class="text-sm text-slate-500 mt-1">0 itens no pedido</p>
       </div>
 
-      <!-- Escolha do Método -->
+      <!-- Seleção do Método -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <button
           id="pay-tab-pix"
           onclick="selectPaymentMethod('pix')"
-          class="p-5 rounded-3xl border-2 text-left transition active:scale-95 flex items-center gap-4 cursor-pointer"
+          class="p-5 rounded-3xl border-4 border-brandGreen bg-green-50/70 text-left transition active:scale-95 flex items-center gap-4 cursor-pointer"
         >
-          <div class="w-14 h-14 rounded-2xl badge-success flex items-center justify-center text-2xl font-extrabold shrink-0">
+          <div class="w-14 h-14 rounded-2xl bg-brandGreen text-white flex items-center justify-center text-3xl shrink-0">
             ❖
           </div>
           <div>
-            <span class="block font-bold text-base sm:text-lg text-dark">Pix (QR Code na tela)</span>
-            <span class="text-xs text-muted">Aprovação imediata</span>
+            <span class="block font-display font-black text-lg text-slate-900">Pix (QR Code)</span>
+            <span class="text-xs sm:text-sm text-slate-600">Aprovação instantânea na tela</span>
           </div>
         </button>
 
         <button
           id="pay-tab-card"
           onclick="selectPaymentMethod('card')"
-          class="p-5 rounded-3xl border-2 text-left transition active:scale-95 flex items-center gap-4 cursor-pointer"
+          class="p-5 rounded-3xl border-4 border-slate-200 bg-white hover:border-slate-300 text-left transition active:scale-95 flex items-center gap-4 cursor-pointer"
         >
-          <div class="w-14 h-14 rounded-2xl bg-primary-container text-on-primary flex items-center justify-center text-2xl shrink-0">
+          <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center text-3xl shrink-0">
             💳
           </div>
           <div>
-            <span class="block font-bold text-base sm:text-lg text-dark">Cartão (Crédito / Débito)</span>
-            <span class="text-xs text-muted">Aproximação ou chip na maquininha</span>
+            <span class="block font-display font-black text-lg text-slate-900">Cartão</span>
+            <span class="text-xs sm:text-sm text-slate-600">Débito ou Crédito por aproximação</span>
           </div>
         </button>
       </div>
 
       <!-- Painel PIX -->
-      <div id="payment-panel-pix" class="bg-surface rounded-3xl p-6 sm:p-8 shadow-theme-sm border border-theme text-center animate-modal">
-        <div class="inline-flex items-center gap-2 badge-warning font-semibold text-xs sm:text-sm px-4 py-1.5 rounded-full mb-4">
+      <div id="payment-panel-pix" class="bg-white rounded-3xl p-6 sm:p-8 shadow-card border border-slate-100 text-center animate-modal">
+        <div class="inline-flex items-center gap-2 bg-green-50 text-brandGreen font-bold text-xs sm:text-sm px-4 py-1.5 rounded-full mb-4">
           <span>⏱️</span>
-          <span>Expira em <strong id="pix-timer" class="font-extrabold">05:00</strong></span>
+          <span>QR Code expira em <strong id="pix-timer" class="font-display">05:00</strong></span>
         </div>
 
-        <h3 class="font-bold text-xl text-dark mb-1">Escaneie o QR Code com o app do seu banco</h3>
-        <p class="text-xs sm:text-sm text-muted mb-6">Assim que o pagamento for confirmado, sua senha será exibida automaticamente.</p>
+        <h3 class="font-display font-extrabold text-xl text-slate-900 mb-1">Aponte a câmera do seu banco</h3>
+        <p class="text-sm text-slate-500 mb-6">Abra o aplicativo do seu banco, escolha <strong>Pagar com Pix</strong> e escaneie o código abaixo.</p>
 
-        <!-- QR Code SVG nítido gerado na tela -->
-        <div class="inline-block p-4 bg-white rounded-3xl border-2 shadow-theme-md mb-6" style="border-color: var(--dourado-base);">
+        <!-- QR Code SVG nítido simulado -->
+        <div class="inline-block p-4 bg-white rounded-3xl border-4 border-slate-900 shadow-lg mb-6">
           <svg viewBox="0 0 210 210" class="w-48 h-48 sm:w-56 sm:h-56" xmlns="http://www.w3.org/2000/svg" aria-label="QR Code Pix">
-            <rect width="210" height="210" fill="#ffffff" />
-            <!-- Finder Top-Left -->
-            <rect x="10" y="10" width="60" height="60" rx="6" fill="#1f1f1f" />
-            <rect x="20" y="20" width="40" height="40" rx="3" fill="#ffffff" />
-            <rect x="30" y="30" width="20" height="20" rx="2" fill="#6b0008" />
-            <!-- Finder Top-Right -->
-            <rect x="140" y="10" width="60" height="60" rx="6" fill="#1f1f1f" />
-            <rect x="150" y="20" width="40" height="40" rx="3" fill="#ffffff" />
-            <rect x="160" y="30" width="20" height="20" rx="2" fill="#6b0008" />
-            <!-- Finder Bottom-Left -->
-            <rect x="10" y="140" width="60" height="60" rx="6" fill="#1f1f1f" />
-            <rect x="20" y="150" width="40" height="40" rx="3" fill="#ffffff" />
-            <rect x="30" y="160" width="20" height="20" rx="2" fill="#6b0008" />
+            <rect width="210" height="210" fill="#FFFFFF" />
+            <!-- Finder Pattern Top-Left -->
+            <rect x="10" y="10" width="60" height="60" rx="6" fill="#0F172A" />
+            <rect x="20" y="20" width="40" height="40" rx="3" fill="#FFFFFF" />
+            <rect x="30" y="30" width="20" height="20" rx="2" fill="#0F172A" />
+            <!-- Finder Pattern Top-Right -->
+            <rect x="140" y="10" width="60" height="60" rx="6" fill="#0F172A" />
+            <rect x="150" y="20" width="40" height="40" rx="3" fill="#FFFFFF" />
+            <rect x="160" y="30" width="20" height="20" rx="2" fill="#0F172A" />
+            <!-- Finder Pattern Bottom-Left -->
+            <rect x="10" y="140" width="60" height="60" rx="6" fill="#0F172A" />
+            <rect x="20" y="150" width="40" height="40" rx="3" fill="#FFFFFF" />
+            <rect x="30" y="160" width="20" height="20" rx="2" fill="#0F172A" />
             <!-- Data Modules -->
-            <g fill="#1f1f1f">
+            <g fill="#0F172A">
               <rect x="80" y="10" width="10" height="10" /><rect x="100" y="10" width="10" height="10" /><rect x="120" y="10" width="10" height="10" />
               <rect x="90" y="20" width="10" height="10" /><rect x="110" y="20" width="10" height="10" />
               <rect x="80" y="30" width="20" height="10" /><rect x="120" y="30" width="10" height="10" />
@@ -540,43 +391,43 @@
               <rect x="90" y="180" width="10" height="20" /><rect x="120" y="180" width="10" height="10" /><rect x="150" y="180" width="20" height="10" /><rect x="190" y="180" width="10" height="20" />
               <rect x="80" y="190" width="10" height="10" /><rect x="110" y="190" width="30" height="10" /><rect x="170" y="190" width="10" height="10" />
             </g>
-            <!-- Selo Central Pix -->
-            <rect x="83" y="83" width="44" height="44" rx="10" fill="#188038" />
-            <text x="105" y="112" text-anchor="middle" fill="#ffffff" font-family="Poppins, sans-serif" font-size="22" font-weight="800">❖</text>
+            <!-- Badge Central Pix -->
+            <rect x="83" y="83" width="44" height="44" rx="10" fill="#16A34A" />
+            <text x="105" y="112" text-anchor="middle" fill="#FFFFFF" font-family="Plus Jakarta Sans, sans-serif" font-size="22" font-weight="900">❖</text>
           </svg>
         </div>
 
         <div class="max-w-md mx-auto">
           <button
             onclick="completePayment('Pix')"
-            class="w-full py-4 sm:py-5 rounded-2xl btn-gold font-bold text-base sm:text-lg flex items-center justify-center gap-2 cursor-pointer"
+            class="w-full py-4 sm:py-5 rounded-2xl bg-brandGreen hover:bg-brandGreenDark active:scale-95 text-white font-display font-extrabold text-lg shadow-lg transition cursor-pointer flex items-center justify-center gap-2"
           >
-            <span>✓</span>
+            <span>✅</span>
             <span>Simular Pagamento Aprovado</span>
           </button>
-          <p class="text-xs text-muted mt-3">
-            Modo demonstração: clique acima para simular o retorno aprovado do webhook Pix.
+          <p class="text-xs text-slate-400 mt-3">
+            Modo demonstração: clique acima para simular a confirmação do webhook Pix do Flask.
           </p>
         </div>
       </div>
 
       <!-- Painel CARTÃO -->
-      <div id="payment-panel-card" class="hidden bg-surface rounded-3xl p-6 sm:p-8 shadow-theme-sm border border-theme text-center animate-modal">
-        <div class="w-24 h-24 rounded-3xl bg-primary-container border-2 border-gold text-5xl flex items-center justify-center mx-auto mb-5 animate-float">
+      <div id="payment-panel-card" class="hidden bg-white rounded-3xl p-6 sm:p-8 shadow-card border border-slate-100 text-center animate-modal">
+        <div class="w-24 h-24 rounded-3xl bg-amber-50 border-2 border-brandYellow text-5xl flex items-center justify-center mx-auto mb-5 animate-pulse-soft">
           💳
         </div>
-        <h3 class="font-bold text-2xl text-dark mb-2">Aproxime ou insira seu cartão</h3>
-        <p class="text-muted text-sm sm:text-base max-w-md mx-auto mb-8">
-          Aguardando leitura na maquininha abaixo do totem. Aceitamos Crédito, Débito e carteiras digitais por aproximação.
+        <h3 class="font-display font-extrabold text-2xl text-slate-900 mb-2">Aproxime ou insira seu cartão</h3>
+        <p class="text-slate-500 text-sm sm:text-base max-w-md mx-auto mb-8">
+          Siga as instruções na maquininha localizada logo abaixo da tela do totem (Débito ou Crédito à vista).
         </p>
 
         <div class="max-w-md mx-auto">
           <button
             onclick="completePayment('Cartão')"
-            class="w-full py-4 sm:py-5 rounded-2xl btn-gold font-bold text-base sm:text-lg flex items-center justify-center gap-2 cursor-pointer"
+            class="w-full py-4 sm:py-5 rounded-2xl bg-brandGreen hover:bg-brandGreenDark active:scale-95 text-white font-display font-extrabold text-lg shadow-lg transition cursor-pointer flex items-center justify-center gap-2"
           >
-            <span>✓</span>
-            <span>Simular Pagamento Aprovado</span>
+            <span>✅</span>
+            <span>Simular Aprovação na Maquininha</span>
           </button>
         </div>
       </div>
@@ -585,73 +436,67 @@
 
 
   <!-- =====================================================================
-       6. TELA DE SENHA + ROTEAMENTO SILENCIOSO DE IMPRESSORAS
+       TELA 6: CONFIRMAÇÃO / SENHA DO PEDIDO + ROTEAMENTO DE IMPRESSORAS
   ====================================================================== -->
-  <section id="screen-success" class="hidden min-h-screen flex flex-col justify-center bg-app p-4 sm:p-8">
-    <main class="max-w-4xl mx-auto w-full space-y-6 animate-modal">
-      <!-- Card da Senha Final em var(--fundo-logo-vermelho) e var(--gradiente-dourado) -->
-      <div class="bg-crimson-radial text-white rounded-3xl p-6 sm:p-10 shadow-theme-md border-2 text-center relative overflow-hidden" style="border-color: var(--dourado-base);">
-        <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full opacity-15 blur-3xl pointer-events-none" style="background: var(--dourado-base);"></div>
-
-        <div class="relative z-10">
-          <div class="inline-flex items-center gap-2 badge-success px-4 py-1.5 rounded-full font-bold text-xs sm:text-sm mb-4">
-            <span>✓</span>
-            <span>Pagamento Aprovado • <span id="success-payment-method">Pix</span></span>
-          </div>
-
-          <h1 class="font-bold text-xl sm:text-2xl text-white/90">
-            Pedido confirmado! Sua senha é:
-          </h1>
-
-          <!-- Senha em Destaque -->
-          <div class="my-6 inline-block rounded-3xl p-[3px] bg-gold-gradient shadow-2xl">
-            <div class="bg-black/40 backdrop-blur-sm rounded-[21px] px-10 sm:px-14 py-5">
-              <span id="order-password-display" class="font-extrabold text-6xl sm:text-8xl tracking-tight" style="color: var(--dourado-base);">
-                #042
-              </span>
-            </div>
-          </div>
-
-          <p class="text-white/85 text-sm sm:text-base max-w-md mx-auto">
-            Acompanhe o chamado no painel do balcão (<strong id="success-mode-text" class="text-white">Comer Aqui</strong>). Obrigado pela preferência!
-          </p>
-
-          <!-- Botões Novo Pedido + Contagem Regressiva -->
-          <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <button
-              onclick="resetToWelcome()"
-              class="w-full sm:w-auto px-8 py-4 rounded-2xl btn-gold font-bold text-base sm:text-lg cursor-pointer"
-            >
-              Novo Pedido
-            </button>
-            <button
-              id="btn-pause-countdown"
-              onclick="toggleSuccessCountdown()"
-              class="w-full sm:w-auto px-5 py-4 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs sm:text-sm transition cursor-pointer"
-            >
-              Retornando ao início em <span id="success-countdown">20</span>s (Pausar)
-            </button>
-          </div>
+  <section id="screen-success" class="hidden min-h-screen flex flex-col justify-between bg-surface p-4 sm:p-8">
+    <main class="max-w-3xl mx-auto w-full flex-1 flex flex-col items-center justify-center py-4">
+      <!-- Card Principal da Senha -->
+      <div class="w-full bg-white rounded-3xl p-6 sm:p-10 shadow-card border border-slate-100 text-center animate-modal">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-green-100 text-brandGreen flex items-center justify-center text-4xl mx-auto mb-4">
+          ✓
         </div>
-      </div>
+        <span class="inline-block px-4 py-1 rounded-full bg-green-50 text-brandGreen font-bold text-xs sm:text-sm uppercase tracking-wider mb-2">
+          Pedido Confirmado • <span id="success-payment-method">Pix</span>
+        </span>
+        <h1 class="font-display font-black text-2xl sm:text-3xl text-slate-900">
+          Sua senha para retirada é:
+        </h1>
 
-      <!-- Painel Técnico: Roteamento Silencioso via HTTP (POST /api/imprimir) -->
-      <div class="bg-surface rounded-3xl p-5 sm:p-6 shadow-theme-sm border border-theme">
-        <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-4 border-b border-theme">
-          <div>
-            <h3 class="font-bold text-sm sm:text-base text-dark flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full animate-pulse" style="background-color: var(--success);"></span>
-              Roteamento Silencioso de Impressoras de Rede
-            </h3>
-            <p class="text-xs text-muted mt-0.5">Divisão automática dos itens do pedido por setor via backend Flask (ESC/POS • Porta 9100)</p>
-          </div>
-          <span class="text-[11px] font-mono font-semibold badge-gold px-3 py-1 rounded-lg">
-            POST /api/imprimir
+        <!-- Senha Gigante -->
+        <div class="my-6 py-6 px-8 rounded-3xl bg-brandYellow/20 border-4 border-dashed border-brandYellow inline-block min-w-[240px]">
+          <span id="order-password-display" class="font-display font-black text-6xl sm:text-8xl text-brandRed tracking-tight">
+            #042
           </span>
         </div>
 
-        <div id="printer-routing-logs" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- Renderizado dinamicamente via JS -->
+        <p class="text-slate-600 text-base sm:text-lg font-medium max-w-md mx-auto">
+          Aguarde sua senha aparecer no painel do balcão (<strong id="success-mode-text">Comer Aqui</strong>). Bom apetite!
+        </p>
+
+        <!-- Botão de Novo Pedido e Contagem Regressiva -->
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <button
+            onclick="resetToWelcome()"
+            class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-brandRed hover:bg-brandRedDark active:scale-95 text-white font-display font-extrabold text-lg shadow-lg transition cursor-pointer"
+          >
+            Fazer Novo Pedido
+          </button>
+          <button
+            id="btn-pause-countdown"
+            onclick="toggleSuccessCountdown()"
+            class="w-full sm:w-auto px-5 py-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer"
+          >
+            Voltando em <span id="success-countdown">20</span>s (Pausar)
+          </button>
+        </div>
+      </div>
+
+      <!-- Painel Discreto de Demonstração Técnica: Roteamento HTTP Silencioso para Impressoras -->
+      <div class="w-full mt-5 bg-slate-900 text-slate-100 rounded-3xl p-5 sm:p-6 shadow-xl border border-slate-800">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b border-slate-800">
+          <div class="flex items-center gap-2.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-brandGreen animate-pulse"></span>
+            <h3 class="font-display font-bold text-sm sm:text-base text-white">
+              Demonstração Técnica • Roteamento Silencioso (Flask → Impressoras de Rede)
+            </h3>
+          </div>
+          <span class="text-[11px] font-mono bg-slate-800 text-brandYellow px-2.5 py-1 rounded-lg">
+            POST /api/imprimir (ESC/POS • Porta 9100)
+          </span>
+        </div>
+
+        <div id="printer-routing-logs" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <!-- Renderizado via JS conforme os itens do pedido -->
         </div>
       </div>
     </main>
@@ -659,122 +504,121 @@
 
 
   <!-- =====================================================================
-       3. MODAL DE PERSONALIZAÇÃO (LANCHES E COMBOS)
+       MODAL 3: PERSONALIZAÇÃO DO PRODUTO
   ====================================================================== -->
-  <div id="modal-product" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-surface w-full sm:max-w-2xl max-h-[92vh] rounded-t-3xl sm:rounded-3xl shadow-2xl border border-theme flex flex-col overflow-hidden animate-modal">
-      <!-- Cabeçalho do Modal -->
-      <div class="bg-crimson-radial text-white p-5 sm:p-6 flex items-center justify-between gap-4 shrink-0 border-b-2" style="border-color: var(--dourado-base);">
-        <div class="flex items-center gap-4 min-w-0">
-          <div id="modal-prod-art" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-surface-alt border-2 border-gold p-2 flex items-center justify-center shrink-0">
-            <!-- SVG injetado via JS -->
-          </div>
-          <div class="min-w-0">
-            <span id="modal-prod-category" class="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-black/30 border mb-1" style="border-color: var(--dourado-base); color: var(--primary-container);">
-              Lanches
-            </span>
-            <h2 id="modal-prod-name" class="font-extrabold text-xl sm:text-2xl leading-tight truncate">Nome do Produto</h2>
-            <p id="modal-prod-desc" class="text-xs text-white/80 line-clamp-2 mt-0.5"></p>
-          </div>
-        </div>
-
+  <div id="modal-product" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full sm:max-w-2xl max-h-[92vh] rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-modal">
+      <!-- Topo com Imagem -->
+      <div class="relative h-48 sm:h-56 bg-slate-100 shrink-0">
+        <img id="modal-prod-img" src="" alt="" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
         <button
           onclick="closeProductModal()"
-          class="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 text-white font-bold text-lg flex items-center justify-center shrink-0 active:scale-95 cursor-pointer"
+          class="absolute top-4 right-4 w-11 h-11 rounded-full bg-white/95 hover:bg-white text-slate-800 font-black text-xl shadow-lg flex items-center justify-center active:scale-95 cursor-pointer"
           aria-label="Fechar"
         >
           ✕
         </button>
+        <div class="absolute bottom-4 left-5 right-5 text-white">
+          <span id="modal-prod-category" class="inline-block text-[11px] font-bold uppercase tracking-wider bg-brandYellow text-slate-900 px-2.5 py-0.5 rounded-full mb-1.5">
+            Hambúrgueres
+          </span>
+          <h2 id="modal-prod-name" class="font-display font-black text-2xl sm:text-3xl leading-tight">Nome do Produto</h2>
+          <p id="modal-prod-desc" class="text-xs sm:text-sm text-slate-200 line-clamp-2 mt-0.5"></p>
+        </div>
       </div>
 
-      <!-- Corpo Rolável de Opções -->
+      <!-- Conteúdo Rolável de Opções -->
       <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
-        <!-- Toggle Transformar em Combo (para Lanches) -->
-        <div id="section-combo-toggle" class="hidden">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="font-bold text-base text-dark">Deseja transformar em Combo?</h3>
-            <span class="badge-gold text-[11px] font-bold px-2.5 py-0.5 rounded-full">+ R$ 14,90</span>
+        <!-- Seção Combo (apenas para Hambúrgueres) -->
+        <div id="section-combo-choice" class="hidden">
+          <h3 class="font-display font-extrabold text-base sm:text-lg text-slate-900 mb-3 flex items-center justify-between">
+            <span>Como você prefere?</span>
+            <span class="text-xs font-bold text-brandRed bg-red-50 px-2.5 py-1 rounded-full">Obrigatório</span>
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button
+              id="opt-single-burger"
+              onclick="selectBurgerFormat(false)"
+              class="p-4 rounded-2xl border-2 text-left transition active:scale-95 cursor-pointer"
+            >
+              <div class="font-display font-extrabold text-slate-900">🍔 Apenas o Lanche</div>
+              <div class="text-xs text-slate-500 mt-0.5">Somente o hambúrguer</div>
+              <div id="opt-single-price" class="font-display font-black text-brandRed mt-2">R$ 0,00</div>
+            </button>
+
+            <button
+              id="opt-combo-burger"
+              onclick="selectBurgerFormat(true)"
+              class="p-4 rounded-2xl border-2 text-left transition active:scale-95 cursor-pointer relative"
+            >
+              <span class="absolute -top-2.5 right-3 bg-brandYellow text-slate-900 text-[10px] font-black uppercase px-2 py-0.5 rounded-full shadow-sm">
+                Mais Vantagem
+              </span>
+              <div class="font-display font-extrabold text-slate-900">🍟 Transformar em Combo</div>
+              <div class="text-xs text-slate-500 mt-0.5">+ Batata M + Bebida M</div>
+              <div class="font-display font-black text-brandGreen mt-2">+ R$ 12,00</div>
+            </button>
           </div>
 
-          <button
-            id="btn-toggle-combo"
-            onclick="toggleComboUpgrade()"
-            class="w-full p-4 rounded-2xl border-2 text-left transition active:scale-[0.99] flex items-center justify-between gap-4 cursor-pointer"
-          >
-            <div class="flex items-center gap-3.5">
-              <div class="w-12 h-12 rounded-xl bg-primary-container border border-gold flex items-center justify-center text-2xl shrink-0">
-                🍟
-              </div>
-              <div>
-                <div class="font-bold text-sm sm:text-base text-dark">Transformar em Combo</div>
-                <div class="text-xs text-muted">Acompanha Batata Média + Bebida Média (+ R$ 14,90)</div>
-              </div>
+          <!-- Escolha da Bebida do Combo -->
+          <div id="section-combo-drink" class="hidden mt-4 p-4 rounded-2xl bg-amber-50/70 border border-brandYellow/50">
+            <label class="block font-display font-bold text-sm text-slate-800 mb-2">Escolha a bebida do seu combo:</label>
+            <div id="combo-drink-options" class="grid grid-cols-3 gap-2">
+              <!-- Renderizado via JS -->
             </div>
-            <!-- Switch visual -->
-            <div id="combo-switch-track" class="w-14 h-8 rounded-full p-1 transition-colors shrink-0 flex items-center">
-              <div id="combo-switch-thumb" class="w-6 h-6 rounded-full bg-white shadow transition-transform"></div>
-            </div>
-          </button>
+          </div>
         </div>
 
-        <!-- Seleção de Bebida do Combo (aparece quando é Combo ou quando Toggle está ativo) -->
-        <div id="section-combo-drink" class="hidden p-4 rounded-2xl bg-surface-alt border border-theme">
-          <div class="flex items-center justify-between mb-2.5">
-            <label class="font-bold text-sm text-dark">Escolha a Bebida Média do Combo:</label>
-            <span class="badge-warning text-[11px] font-semibold px-2.5 py-0.5 rounded-full">Obrigatório</span>
-          </div>
-          <div id="combo-drink-options" class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <!-- Renderizado via JS -->
-          </div>
-        </div>
-
-        <!-- Adicionais Pagos -->
-        <div id="section-extras">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="font-bold text-base text-dark">Adicionais</h3>
-            <span class="text-xs font-medium text-muted">Opcional</span>
-          </div>
+        <!-- Seção Adicionais Pagos -->
+        <div id="section-extras" class="hidden">
+          <h3 class="font-display font-extrabold text-base sm:text-lg text-slate-900 mb-3 flex items-center justify-between">
+            <span>Turbine seu pedido (Adicionais)</span>
+            <span class="text-xs font-semibold text-slate-400">Opcional</span>
+          </h3>
           <div id="extras-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <!-- Renderizado via JS -->
           </div>
         </div>
 
-        <!-- Retirar Ingredientes (Grátis) -->
-        <div id="section-removals">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="font-bold text-base text-dark">Retirar Ingredientes</h3>
-            <span class="badge-success text-[11px] font-bold px-2.5 py-0.5 rounded-full">Grátis</span>
-          </div>
+        <!-- Seção Remover Ingredientes (Sem Custo) -->
+        <div id="section-removals" class="hidden">
+          <h3 class="font-display font-extrabold text-base sm:text-lg text-slate-900 mb-3 flex items-center justify-between">
+            <span>Retirar algum ingrediente?</span>
+            <span class="text-xs font-semibold text-brandGreen bg-green-50 px-2.5 py-0.5 rounded-full">Grátis</span>
+          </h3>
           <div id="removals-list" class="flex flex-wrap gap-2.5">
             <!-- Renderizado via JS -->
           </div>
         </div>
       </div>
 
-      <!-- Rodapé: Quantidade + Adicionar ao Pedido -->
-      <div class="p-4 sm:p-5 bg-surface-alt border-t border-theme flex items-center justify-between gap-3 sm:gap-4 shrink-0">
-        <div class="flex items-center bg-surface rounded-2xl border border-theme p-1 shadow-theme-sm">
+      <!-- Rodapé do Modal: Quantidade + Botão Adicionar -->
+      <div class="p-4 sm:p-5 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-4 shrink-0">
+        <!-- Seletor de Quantidade -->
+        <div class="flex items-center bg-white rounded-2xl border border-slate-200 p-1 shadow-sm">
           <button
             onclick="changeModalQty(-1)"
-            class="w-11 h-11 rounded-xl bg-surface-alt hover:bg-primary-container font-bold text-xl text-dark flex items-center justify-center active:scale-90 cursor-pointer"
+            class="w-11 h-11 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-90 font-black text-xl text-slate-800 flex items-center justify-center cursor-pointer"
           >
             −
           </button>
-          <span id="modal-qty-value" class="w-10 text-center font-extrabold text-lg text-dark">1</span>
+          <span id="modal-qty-value" class="w-11 text-center font-display font-black text-xl text-slate-900">1</span>
           <button
             onclick="changeModalQty(1)"
-            class="w-11 h-11 rounded-xl bg-primary-container border border-gold font-bold text-xl text-on-primary flex items-center justify-center active:scale-90 cursor-pointer"
+            class="w-11 h-11 rounded-xl bg-brandYellow hover:bg-brandYellowDark active:scale-90 font-black text-xl text-slate-900 flex items-center justify-center cursor-pointer"
           >
             +
           </button>
         </div>
 
+        <!-- Botão Adicionar ao Pedido -->
         <button
           onclick="confirmAddToCart()"
-          class="flex-1 py-4 px-5 rounded-2xl btn-gold font-bold text-sm sm:text-base flex items-center justify-between cursor-pointer"
+          class="flex-1 py-4 px-5 rounded-2xl bg-brandGreen hover:bg-brandGreenDark active:scale-95 text-white font-display font-extrabold text-base sm:text-lg shadow-lg transition flex items-center justify-between cursor-pointer"
         >
           <span>Adicionar ao Pedido</span>
-          <span id="modal-total-btn" class="bg-black/20 px-3 py-1 rounded-xl font-extrabold">R$ 0,00</span>
+          <span id="modal-total-btn" class="bg-black/15 px-3 py-1 rounded-xl">R$ 0,00</span>
         </button>
       </div>
     </div>
@@ -782,35 +626,37 @@
 
 
   <!-- =====================================================================
-       4. MODAL DE REVISÃO DO PEDIDO + UPSELL
+       MODAL 4: REVISÃO DO CARRINHO + UPSELL ("APROVEITE E LEVE TAMBÉM")
   ====================================================================== -->
-  <div id="modal-cart" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-surface w-full sm:max-w-2xl max-h-[92vh] rounded-t-3xl sm:rounded-3xl shadow-2xl border border-theme flex flex-col overflow-hidden animate-modal">
+  <div id="modal-cart" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full sm:max-w-2xl max-h-[92vh] rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-modal">
       <!-- Cabeçalho -->
-      <div class="bg-crimson-radial text-white px-6 py-5 flex items-center justify-between shrink-0 border-b-2" style="border-color: var(--dourado-base);">
+      <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between shrink-0">
         <div>
-          <h2 class="font-extrabold text-xl sm:text-2xl">Revise seu Pedido</h2>
-          <p class="text-xs text-white/80">Confira itens, personalizações e quantidades antes do pagamento</p>
+          <h2 class="font-display font-black text-2xl text-slate-900">Revise seu Pedido</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Confira os itens e personalizações antes de pagar</p>
         </div>
         <button
           onclick="closeCartModal()"
-          class="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 text-white font-bold text-lg flex items-center justify-center active:scale-95 cursor-pointer"
+          class="w-11 h-11 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xl flex items-center justify-center active:scale-95 cursor-pointer"
         >
           ✕
         </button>
       </div>
 
-      <!-- Itens do Carrinho + Faixa de Upsell -->
+      <!-- Lista de Itens + Upsell -->
       <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
         <div id="cart-items-container" class="space-y-3">
           <!-- Renderizado via JS -->
         </div>
 
-        <!-- Faixa de Upsell em var(--surface-alt) -->
-        <div class="bg-surface-alt border border-theme rounded-3xl p-4 sm:p-5">
+        <!-- Faixa de Upsell -->
+        <div class="bg-amber-50/80 border border-brandYellow/60 rounded-3xl p-4 sm:p-5">
           <div class="flex items-center justify-between mb-3">
-            <h3 class="font-bold text-base text-dark">✨ Aproveite e leve também</h3>
-            <span class="badge-gold text-[11px] font-semibold px-2.5 py-0.5 rounded-full">1 clique</span>
+            <h3 class="font-display font-extrabold text-base sm:text-lg text-slate-900">
+              ✨ Aproveite e leve também
+            </h3>
+            <span class="text-xs font-bold text-amber-800 bg-brandYellow/50 px-2.5 py-0.5 rounded-full">Toque rápido</span>
           </div>
           <div id="upsell-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <!-- Renderizado via JS -->
@@ -818,26 +664,27 @@
         </div>
       </div>
 
-      <!-- Rodapé -->
-      <div class="p-5 sm:p-6 bg-surface-alt border-t border-theme shrink-0">
+      <!-- Rodapé do Carrinho -->
+      <div class="p-5 sm:p-6 bg-slate-50 border-t border-slate-200 shrink-0">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <span class="text-[11px] uppercase font-bold tracking-wider text-muted block">Total do Pedido</span>
-            <span id="cart-modal-mode" class="text-xs font-semibold text-primary-dark">🍽️ Comer Aqui</span>
+            <span class="text-xs uppercase font-bold text-slate-500 block">Total do Pedido</span>
+            <span id="cart-modal-mode" class="text-xs font-bold text-brandRed">Comer Aqui</span>
           </div>
-          <span id="cart-modal-total" class="font-extrabold text-3xl text-dark">R$ 0,00</span>
+          <span id="cart-modal-total" class="font-display font-black text-3xl text-slate-900">R$ 0,00</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <button
             onclick="closeCartModal()"
-            class="py-4 rounded-2xl bg-surface border border-theme hover:bg-primary-container text-dark font-bold text-sm sm:text-base transition active:scale-95 cursor-pointer"
+            class="py-4 rounded-2xl bg-white border-2 border-slate-200 hover:bg-slate-100 text-slate-700 font-bold text-base transition active:scale-95 cursor-pointer"
           >
             + Adicionar Itens
           </button>
           <button
+            id="btn-go-payment"
             onclick="goToPayment()"
-            class="sm:col-span-2 py-4 rounded-2xl btn-gold font-bold text-base sm:text-lg flex items-center justify-center gap-2 cursor-pointer"
+            class="sm:col-span-2 py-4 rounded-2xl bg-brandGreen hover:bg-brandGreenDark disabled:bg-slate-300 text-white font-display font-extrabold text-lg shadow-lg transition active:scale-95 cursor-pointer flex items-center justify-center gap-2"
           >
             <span>Ir para Pagamento</span>
             <span>→</span>
@@ -849,29 +696,27 @@
 
 
   <!-- =====================================================================
-       MODAL DE CONFIRMAÇÃO CUSTOMIZADO (NUNCA USA confirm())
+       MODAL DE CONFIRMAÇÃO CUSTOMIZADO (SUBSTITUI confirm())
   ====================================================================== -->
-  <div id="modal-confirm" class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-surface rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl border border-theme animate-modal">
-      <div class="w-16 h-16 rounded-2xl badge-danger text-3xl flex items-center justify-center mx-auto mb-4">
+  <div id="modal-confirm" class="hidden fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl animate-modal">
+      <div class="w-16 h-16 rounded-2xl bg-red-50 text-brandRed text-3xl flex items-center justify-center mx-auto mb-4">
         ⚠️
       </div>
-      <h3 id="confirm-title" class="font-extrabold text-xl text-dark mb-2">Confirmar ação</h3>
-      <p id="confirm-desc" class="text-sm text-muted mb-6">Deseja realmente continuar?</p>
+      <h3 class="font-display font-black text-xl text-slate-900 mb-2">Cancelar pedido atual?</h3>
+      <p class="text-sm text-slate-500 mb-6">Todos os itens adicionados ao carrinho serão removidos e voltaremos para a tela inicial.</p>
       <div class="grid grid-cols-2 gap-3">
         <button
           onclick="closeConfirmModal()"
-          class="py-3.5 rounded-2xl bg-surface-alt border border-theme text-dark font-bold text-sm transition active:scale-95 cursor-pointer"
+          class="py-3.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition active:scale-95 cursor-pointer"
         >
-          Voltar
+          Continuar
         </button>
         <button
-          id="btn-confirm-ok"
-          onclick="executeConfirmAction()"
-          class="py-3.5 rounded-2xl font-bold text-sm text-white transition active:scale-95 cursor-pointer"
-          style="background-color: var(--danger-text);"
+          onclick="confirmResetOrder()"
+          class="py-3.5 rounded-2xl bg-brandRed hover:bg-brandRedDark text-white font-bold transition active:scale-95 cursor-pointer"
         >
-          Sim, confirmar
+          Sim, cancelar
         </button>
       </div>
     </div>
@@ -879,352 +724,292 @@
 
 
   <!-- =====================================================================
-       TOAST DE FEEDBACK (NUNCA USA alert())
+       TOAST DE NOTIFICAÇÃO VISUAL (SUBSTITUI alert())
   ====================================================================== -->
   <div
     id="toast"
     class="fixed top-6 left-1/2 -translate-x-1/2 z-[70] pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-4"
   >
-    <div class="bg-crimson-radial text-white px-5 py-3 rounded-2xl shadow-theme-md border font-semibold text-sm flex items-center gap-2.5" style="border-color: var(--dourado-base);">
-      <span id="toast-icon">✓</span>
+    <div class="bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl font-semibold text-sm flex items-center gap-2.5">
+      <span id="toast-icon">✅</span>
       <span id="toast-message">Item adicionado!</span>
     </div>
   </div>
 
 
   <!-- =====================================================================
-       JAVASCRIPT PURO: CARDÁPIO, ILUSTRAÇÕES SVG, CARRINHO E IMPRESSÃO
+       LÓGICA JAVASCRIPT COMPLETA DO TOTEM
   ====================================================================== -->
   <script>
     /* -------------------------------------------------------------------
-       1. ILUSTRAÇÕES SVG PRÓPRIAS (ZERO DEPENDÊNCIA DE IMAGENS EXTERNAS)
-    -------------------------------------------------------------------- */
-    function getProductSVG(artKey) {
-      const svgs = {
-        burger_double: `
-          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="60" cy="84" rx="44" ry="7" fill="#e2dcd0"/>
-            <path d="M22 42 C22 18, 98 18, 98 42 Z" fill="#d99b43" stroke="#8c6d3f" stroke-width="2"/>
-            <circle cx="44" cy="30" r="2.2" fill="#fef7e0"/><circle cx="60" cy="26" r="2.2" fill="#fef7e0"/><circle cx="76" cy="31" r="2.2" fill="#fef7e0"/>
-            <path d="M18 46 H102 L94 54 L80 49 L66 56 L52 49 L36 55 Z" fill="#f5b82e"/>
-            <rect x="20" y="51" width="80" height="10" rx="5" fill="#5e2318"/>
-            <path d="M19 61 H101 L91 67 L72 62 L58 68 L38 62 Z" fill="#f5b82e"/>
-            <rect x="20" y="65" width="80" height="10" rx="5" fill="#4a1911"/>
-            <path d="M24 75 H96 C96 82, 90 85, 82 85 H38 C30 85, 24 82, 24 75 Z" fill="#d99b43" stroke="#8c6d3f" stroke-width="2"/>
-          </svg>`,
-
-        burger_classic: `
-          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="60" cy="84" rx="44" ry="7" fill="#e2dcd0"/>
-            <path d="M22 44 C22 20, 98 20, 98 44 Z" fill="#d99b43" stroke="#8c6d3f" stroke-width="2"/>
-            <circle cx="46" cy="32" r="2" fill="#fef7e0"/><circle cx="62" cy="28" r="2" fill="#fef7e0"/><circle cx="75" cy="33" r="2" fill="#fef7e0"/>
-            <path d="M18 48 Q28 42 38 48 T58 48 T78 48 T102 48" fill="none" stroke="#188038" stroke-width="6" stroke-linecap="round"/>
-            <rect x="24" y="52" width="72" height="6" rx="3" fill="#c5221f"/>
-            <path d="M20 58 H100 L88 65 L60 60 L34 65 Z" fill="#f5b82e"/>
-            <rect x="20" y="61" width="80" height="12" rx="6" fill="#5e2318"/>
-            <path d="M24 73 H96 C96 80, 90 84, 82 84 H38 C30 84, 24 80, 24 73 Z" fill="#d99b43" stroke="#8c6d3f" stroke-width="2"/>
-          </svg>`,
-
-        burger_chicken: `
-          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="60" cy="84" rx="44" ry="7" fill="#e2dcd0"/>
-            <path d="M22 44 C22 22, 98 22, 98 44 Z" fill="#e0a952" stroke="#8c6d3f" stroke-width="2"/>
-            <path d="M18 49 Q30 43 42 49 T66 49 T90 49 T102 49" fill="none" stroke="#2e9e4f" stroke-width="6" stroke-linecap="round"/>
-            <rect x="18" y="54" width="84" height="16" rx="8" fill="#cc7a29" stroke="#8c4e12" stroke-width="2"/>
-            <circle cx="34" cy="62" r="2" fill="#f5ecd4" opacity="0.7"/><circle cx="58" cy="60" r="2.2" fill="#f5ecd4" opacity="0.7"/><circle cx="82" cy="63" r="2" fill="#f5ecd4" opacity="0.7"/>
-            <path d="M24 72 H96 C96 80, 90 84, 82 84 H38 C30 84, 24 80, 24 72 Z" fill="#e0a952" stroke="#8c6d3f" stroke-width="2"/>
-          </svg>`,
-
-        combo_box: `
-          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="60" cy="85" rx="50" ry="7" fill="#e2dcd0"/>
-            <!-- Copo bebida -->
-            <path d="M78 26 H102 L98 78 H82 Z" fill="#6b0008" stroke="#ccae62" stroke-width="2"/>
-            <rect x="75" y="22" width="30" height="6" rx="3" fill="#f4f1ea" stroke="#8c6d3f" stroke-width="1.5"/>
-            <path d="M90 22 L95 10" stroke="#ccae62" stroke-width="3" stroke-linecap="round"/>
-            <!-- Batata -->
-            <rect x="14" y="34" width="6" height="24" rx="2" fill="#f5b82e"/>
-            <rect x="22" y="28" width="6" height="30" rx="2" fill="#e6a21e"/>
-            <rect x="30" y="32" width="6" height="26" rx="2" fill="#f5b82e"/>
-            <path d="M10 48 H40 L36 78 H14 Z" fill="#9c000e" stroke="#ccae62" stroke-width="2"/>
-            <!-- Burger frente -->
-            <path d="M32 60 C32 45, 80 45, 80 60 Z" fill="#d99b43" stroke="#8c6d3f" stroke-width="1.8"/>
-            <rect x="30" y="62" width="52" height="9" rx="4.5" fill="#5e2318"/>
-            <path d="M33 72 H79 C79 78, 74 81, 68 81 H44 C38 81, 33 78, 33 72 Z" fill="#d99b43" stroke="#8c6d3f" stroke-width="1.8"/>
-          </svg>`,
-
-        fries: `
-          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="60" cy="85" rx="34" ry="6" fill="#e2dcd0"/>
-            <rect x="38" y="20" width="8" height="34" rx="3" fill="#f5b82e" transform="rotate(-10 38 20)"/>
-            <rect x="49" y="14" width="8" height="38" rx="3" fill="#e6a21e"/>
-            <rect x="60" y="16" width="8" height="36" rx="3" fill="#f5b82e"/>
-            <rect x="71" y="21" width="8" height="34" rx="3" fill="#e6a21e" transform="rotate(9 71 21)"/>
-            <path d="M32 42 Q60 52 88 42 L80 82 H40 Z" fill="#8b000c" stroke="#ccae62" stroke-width="2.2"/>
-            <circle cx="60" cy="63" r="8" fill="#ccae62" opacity="0.9"/>
-          </svg>`,
-
-        nuggets: `
-          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="60" cy="82" rx="42" ry="7" fill="#e2dcd0"/>
-            <ellipse cx="42" cy="54" rx="18" ry="12" fill="#d48932" stroke="#8c4e12" stroke-width="2"/>
-            <ellipse cx="74" cy="50" rx="19" ry="12" fill="#e09a3e" stroke="#8c4e12" stroke-width="2"/>
-            <ellipse cx="58" cy="67" rx="20" ry="12" fill="#cc7a29" stroke="#8c4e12" stroke-width="2"/>
-            <circle cx="88" cy="70" r="10" fill="#6b0008" stroke="#ccae62" stroke-width="2"/>
-          </svg>`,
-
-        onion_rings: `
-          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="60" cy="83" rx="40" ry="6" fill="#e2dcd0"/>
-            <ellipse cx="52" cy="56" rx="22" ry="14" fill="none" stroke="#d48932" stroke-width="10"/>
-            <ellipse cx="70" cy="44" rx="20" ry="12" fill="none" stroke="#e09a3e" stroke-width="9"/>
-            <ellipse cx="62" cy="66" rx="22" ry="12" fill="none" stroke="#cc7a29" stroke-width="9"/>
-          </svg>`,
-
-        soda: `
-          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="60" cy="85" rx="28" ry="6" fill="#e2dcd0"/>
-            <path d="M40 28 H80 L74 82 H46 Z" fill="#6b0008" stroke="#ccae62" stroke-width="2.2"/>
-            <rect x="36" y="22" width="48" height="8" rx="4" fill="#f4f1ea" stroke="#8c6d3f" stroke-width="2"/>
-            <path d="M60 22 L68 8" stroke="#ccae62" stroke-width="4" stroke-linecap="round"/>
-            <rect x="46" y="46" width="28" height="14" rx="4" fill="#ccae62" opacity="0.9"/>
-          </svg>`,
-
-        juice: `
-          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="60" cy="85" rx="26" ry="6" fill="#e2dcd0"/>
-            <path d="M42 28 H78 L73 82 H47 Z" fill="#f59e0b" stroke="#b06000" stroke-width="2"/>
-            <circle cx="76" cy="28" r="11" fill="#fbbf24" stroke="#b06000" stroke-width="2"/>
-            <path d="M56 28 L50 10" stroke="#188038" stroke-width="3.5" stroke-linecap="round"/>
-          </svg>`,
-
-        milkshake: `
-          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="60" cy="85" rx="26" ry="6" fill="#e2dcd0"/>
-            <path d="M42 36 H78 L72 82 H48 Z" fill="#6b3e26" stroke="#8c6d3f" stroke-width="2"/>
-            <path d="M38 36 C38 20, 82 20, 82 36 Z" fill="#fff8eb" stroke="#e2dcd0" stroke-width="2"/>
-            <circle cx="60" cy="18" r="6" fill="#c5221f"/>
-            <path d="M66 24 L76 10" stroke="#ccae62" stroke-width="3.5" stroke-linecap="round"/>
-          </svg>`,
-
-        brownie: `
-          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="60" cy="82" rx="42" ry="7" fill="#e2dcd0"/>
-            <polygon points="28,54 60,38 92,54 60,70" fill="#5c2c16" stroke="#3b1a0c" stroke-width="2"/>
-            <polygon points="28,54 60,70 60,80 28,64" fill="#421e0e"/>
-            <polygon points="92,54 60,70 60,80 92,64" fill="#361709"/>
-            <circle cx="60" cy="40" r="14" fill="#fff8eb" stroke="#e2dcd0" stroke-width="2"/>
-            <path d="M50 38 Q60 48 70 38" fill="none" stroke="#5c2c16" stroke-width="3" stroke-linecap="round"/>
-          </svg>`,
-
-        sundae: `
-          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="60" cy="85" rx="26" ry="6" fill="#e2dcd0"/>
-            <path d="M44 46 H76 L70 82 H50 Z" fill="#ffffff" stroke="#ccae62" stroke-width="2.2"/>
-            <path d="M40 46 C40 24, 80 24, 80 46 Z" fill="#fff8eb" stroke="#e2dcd0" stroke-width="2"/>
-            <path d="M45 36 Q60 44 75 36" fill="none" stroke="#5c2c16" stroke-width="5" stroke-linecap="round"/>
-            <circle cx="60" cy="23" r="5.5" fill="#c5221f"/>
-          </svg>`
-      };
-
-      return svgs[artKey] || svgs.burger_classic;
-    }
-
-    /* -------------------------------------------------------------------
-       2. CATÁLOGO DE CATEGORIAS, PRODUTOS, ADICIONAIS E UPSELL
+       1. DADOS DO CARDÁPIO, ADICIONAIS, REMOÇÕES E UPSELL
     -------------------------------------------------------------------- */
     const CATEGORIES = [
-      { id: 'lanches', name: 'Lanches', icon: '🍔', subtitle: 'Hambúrgueres artesanais • Toque para personalizar ou transformar em Combo' },
-      { id: 'combos', name: 'Combos', icon: '🍱', subtitle: 'Lanche + Batata Média + Bebida Média com preço especial' },
-      { id: 'acompanhamentos', name: 'Acompanhamentos', icon: '🍟', subtitle: 'Porções crocantes preparadas na hora' },
-      { id: 'bebidas', name: 'Bebidas', icon: '🥤', subtitle: 'Refrigerantes, sucos naturais e milkshakes' },
-      { id: 'sobremesas', name: 'Sobremesas', icon: '🍨', subtitle: 'Doces artesanais para encerrar com chave de ouro' }
+      { id: 'combos', name: 'Combos', icon: '🍱', subtitle: 'Lanche + Batata Média + Bebida Média' },
+      { id: 'burgers', name: 'Hambúrgueres', icon: '🍔', subtitle: 'Grelhados na hora • Personalize do seu jeito' },
+      { id: 'sides', name: 'Acompanhamentos', icon: '🍟', subtitle: 'Crocantes e quentinhos para acompanhar' },
+      { id: 'drinks', name: 'Bebidas', icon: '🥤', subtitle: 'Bem geladas para refrescar' },
+      { id: 'desserts', name: 'Sobremesas', icon: '🍦', subtitle: 'O toque doce perfeito para finalizar' }
     ];
 
     const PRODUCTS = [
-      // LANCHES
-      {
-        id: 'l1',
-        category: 'lanches',
-        name: 'Maison Duplo Cheddar',
-        desc: '2 carnes angus 120g, creme de cheddar inglês, bacon crocante e pão brioche selado.',
-        price: 29.90,
-        badge: 'Mais Pedido',
-        art: 'burger_double',
-        customizable: true,
-        canUpgradeToCombo: true
-      },
-      {
-        id: 'l2',
-        category: 'lanches',
-        name: 'Clássico Imperial',
-        desc: 'Carne bovina 150g na brasa, queijo prato, alface americana, tomate, picles e molho da casa.',
-        price: 24.90,
-        badge: null,
-        art: 'burger_classic',
-        customizable: true,
-        canUpgradeToCombo: true
-      },
-      {
-        id: 'l3',
-        category: 'lanches',
-        name: 'Crispy Chicken Gold',
-        desc: 'Filé de frango super crocante, maionese de ervas finas e alface fresca no pão brioche.',
-        price: 25.90,
-        badge: 'Crocante',
-        art: 'burger_chicken',
-        customizable: true,
-        canUpgradeToCombo: true
-      },
-
       // COMBOS
       {
         id: 'c1',
         category: 'combos',
-        name: 'Combo Maison Duplo',
-        desc: 'Maison Duplo Cheddar + Batata Média crocante + Bebida Média à escolha.',
-        price: 42.90,
-        badge: 'Destaque',
-        art: 'combo_box',
+        name: 'Combo Duplo Cheddar Supreme',
+        desc: '2 carnes grelhadas, cheddar cremoso, bacon + Batata M + Bebida M.',
+        price: 36.90,
+        badge: 'Mais Pedido',
         customizable: true,
-        isCombo: true
+        isCombo: true,
+        printerSectors: ['cozinha', 'bebidas'],
+        img: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=600&q=80'
       },
       {
         id: 'c2',
         category: 'combos',
-        name: 'Combo Clássico Imperial',
-        desc: 'Clássico Imperial + Batata Média crocante + Bebida Média à escolha.',
-        price: 37.90,
+        name: 'Combo Clássico Salada',
+        desc: 'Hambúrguer 150g, alface, tomate, queijo prato + Batata M + Bebida M.',
+        price: 31.90,
         badge: null,
-        art: 'combo_box',
         customizable: true,
-        isCombo: true
+        isCombo: true,
+        printerSectors: ['cozinha', 'bebidas'],
+        img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d?auto=format&fit=crop&w=600&q=80'
       },
       {
         id: 'c3',
         category: 'combos',
         name: 'Combo Crispy Chicken',
-        desc: 'Crispy Chicken Gold + Batata Média crocante + Bebida Média à escolha.',
-        price: 38.90,
-        badge: 'Economia',
-        art: 'combo_box',
+        desc: 'Frango super crocante, maionese temperada + Batata M + Bebida M.',
+        price: 32.90,
+        badge: 'Novidade',
         customizable: true,
-        isCombo: true
+        isCombo: true,
+        printerSectors: ['cozinha', 'bebidas'],
+        img: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=600&q=80'
+      },
+
+      // HAMBÚRGUERES
+      {
+        id: 'b1',
+        category: 'burgers',
+        name: 'Duplo Cheddar Supreme',
+        desc: 'Dois hambúrgueres bovinos, dobro de cheddar, bacon crocante e molho da casa.',
+        price: 26.90,
+        badge: 'Mais Pedido',
+        customizable: true,
+        canUpgradeToCombo: true,
+        printerSectors: ['cozinha'],
+        img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'b2',
+        category: 'burgers',
+        name: 'Smash Bacon Grill',
+        desc: 'Pão brioche tostado, carne smash prensada, queijo derretido e fatias de bacon.',
+        price: 23.90,
+        badge: null,
+        customizable: true,
+        canUpgradeToCombo: true,
+        printerSectors: ['cozinha'],
+        img: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'b3',
+        category: 'burgers',
+        name: 'Clássico da Casa',
+        desc: 'Carne 100% bovina, queijo prato, picles, cebola roxa, alface, tomate e molho especial.',
+        price: 21.90,
+        badge: null,
+        customizable: true,
+        canUpgradeToCombo: true,
+        printerSectors: ['cozinha'],
+        img: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'b4',
+        category: 'burgers',
+        name: 'Crispy Chicken Burger',
+        desc: 'Filé de peito de frango empanado crocante, alface americana e maionese de ervas.',
+        price: 22.90,
+        badge: 'Crocante',
+        customizable: true,
+        canUpgradeToCombo: true,
+        printerSectors: ['cozinha'],
+        img: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=600&q=80'
       },
 
       // ACOMPANHAMENTOS
       {
-        id: 'a1',
-        category: 'acompanhamentos',
-        name: 'Batata Frita Rústica',
-        desc: 'Porção média sequinha e dourada com sal fino e toque de páprica.',
+        id: 's1',
+        category: 'sides',
+        name: 'Batata Frita Grande',
+        desc: 'Porção generosa de batatas sequinhas e crocantes com sal na medida.',
         price: 13.90,
         badge: 'Favorita',
-        art: 'fries',
-        customizable: false
+        customizable: false,
+        printerSectors: ['cozinha'],
+        img: 'https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=600&q=80'
       },
       {
-        id: 'a2',
-        category: 'acompanhamentos',
-        name: 'Nuggets Artesanais (6 unid.)',
-        desc: '6 unidades de peito de frango empanado crocante com molho barbecue.',
-        price: 14.90,
+        id: 's2',
+        category: 'sides',
+        name: 'Batata Cheddar & Bacon',
+        desc: 'Nossa batata crocante coberta com muito cheddar cremoso e cubos de bacon.',
+        price: 18.90,
+        badge: 'Irresistível',
+        customizable: false,
+        printerSectors: ['cozinha'],
+        img: 'https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 's3',
+        category: 'sides',
+        name: 'Nuggets Crocantes (6 unid.)',
+        desc: '6 pedaços de frango empanado douradinhos. Acompanha molho barbecue.',
+        price: 11.90,
         badge: null,
-        art: 'nuggets',
-        customizable: false
+        customizable: false,
+        printerSectors: ['cozinha'],
+        img: 'https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=600&q=80'
       },
       {
-        id: 'a3',
-        category: 'acompanhamentos',
+        id: 's4',
+        category: 'sides',
         name: 'Onion Rings (8 unid.)',
-        desc: 'Anéis de cebola empanados crocantes por fora e macios por dentro.',
-        price: 15.50,
+        desc: 'Anéis de cebola empanados super crocantes.',
+        price: 12.90,
         badge: null,
-        art: 'onion_rings',
-        customizable: false
+        customizable: false,
+        printerSectors: ['cozinha'],
+        img: 'https://images.unsplash.com/photo-1639024471283-03518883512d?auto=format&fit=crop&w=600&q=80'
       },
 
       // BEBIDAS
       {
-        id: 'b1',
-        category: 'bebidas',
+        id: 'd1',
+        category: 'drinks',
         name: 'Refrigerante Cola 500ml',
-        desc: 'Bem gelado com gelo e limão opcional.',
+        desc: 'Copo 500ml com gelo e limão opcional.',
         price: 9.50,
         badge: null,
-        art: 'soda',
-        customizable: false
+        customizable: false,
+        printerSectors: ['bebidas'],
+        img: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80'
       },
       {
-        id: 'b2',
-        category: 'bebidas',
-        name: 'Suco Natural de Laranja',
-        desc: '400ml espremido na hora, sem adição de açúcar.',
-        price: 11.90,
-        badge: '100% Fruta',
-        art: 'juice',
-        customizable: false
+        id: 'd2',
+        category: 'drinks',
+        name: 'Suco Natural de Laranja 400ml',
+        desc: '100% fruta, gelado e refrescante.',
+        price: 10.90,
+        badge: 'Natural',
+        customizable: false,
+        printerSectors: ['bebidas'],
+        img: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=600&q=80'
       },
       {
-        id: 'b3',
-        category: 'bebidas',
-        name: 'Milkshake Belga 400ml',
-        desc: 'Sorvete de baunilha batido com calda de chocolate belga e chantilly.',
-        price: 17.90,
-        badge: 'Especial',
-        art: 'milkshake',
-        customizable: false
+        id: 'd3',
+        category: 'drinks',
+        name: 'Milkshake Chocolate 400ml',
+        desc: 'Sorvete cremoso batido com calda de chocolate belga.',
+        price: 15.90,
+        badge: 'Mais Pedido',
+        customizable: false,
+        printerSectors: ['bebidas'],
+        img: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'd4',
+        category: 'drinks',
+        name: 'Água Mineral 500ml',
+        desc: 'Sem gás, bem gelada.',
+        price: 5.50,
+        badge: null,
+        customizable: false,
+        printerSectors: ['bebidas'],
+        img: 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=600&q=80'
       },
 
       // SOBREMESAS
       {
-        id: 's1',
-        category: 'sobremesas',
-        name: 'Brownie com Sorvete',
-        desc: 'Brownie quentinho de chocolate meio amargo com bola de creme.',
-        price: 15.90,
-        badge: 'Irresistível',
-        art: 'brownie',
-        customizable: false
+        id: 'ds1',
+        category: 'desserts',
+        name: 'Casquinha de Baunilha',
+        desc: 'Sorvete cremoso de baunilha na casquinha crocante.',
+        price: 5.90,
+        badge: 'Clássica',
+        customizable: false,
+        printerSectors: ['bebidas'],
+        img: 'https://images.unsplash.com/photo-1560008581-09826d1de69e?auto=format&fit=crop&w=600&q=80'
       },
       {
-        id: 's2',
-        category: 'sobremesas',
-        name: 'Sundae Calda Quente',
-        desc: 'Sorvete cremoso de baunilha com calda de chocolate e castanhas.',
-        price: 11.90,
+        id: 'ds2',
+        category: 'desserts',
+        name: 'Sundae Calda de Chocolate',
+        desc: 'Sorvete de baunilha com cobertura quente de chocolate e amendoim.',
+        price: 11.50,
         badge: null,
-        art: 'sundae',
-        customizable: false
+        customizable: false,
+        printerSectors: ['bebidas'],
+        img: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'ds3',
+        category: 'desserts',
+        name: 'Torta Quente de Maçã',
+        desc: 'Massa folhada crocante recheada com maçã e toque de canela.',
+        price: 9.90,
+        badge: 'Quentinha',
+        customizable: false,
+        printerSectors: ['cozinha'],
+        img: 'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?auto=format&fit=crop&w=600&q=80'
       }
     ];
 
-    // Regras de Personalização solicitadas
-    const COMBO_UPGRADE_PRICE = 14.90;
-    const COMBO_DRINKS = ['Cola Média', 'Guaraná Médio', 'Suco Laranja'];
-
     const EXTRAS = [
-      { id: 'ex_bacon', name: 'Bacon Crocante', price: 5.00 },
-      { id: 'ex_cheddar', name: 'Cheddar Cremoso', price: 4.50 },
-      { id: 'ex_burger', name: 'Hambúrguer Extra', price: 9.00 },
-      { id: 'ex_sauce', name: 'Molho da Casa', price: 3.00 }
+      { id: 'ex_bacon', name: 'Bacon Crocante', price: 4.50 },
+      { id: 'ex_cheddar', name: 'Queijo Cheddar Extra', price: 3.50 },
+      { id: 'ex_patty', name: 'Hambúrguer Extra', price: 8.00 },
+      { id: 'ex_sauce', name: 'Molho Especial Extra', price: 2.50 }
     ];
 
-    const REMOVALS = ['Sem Cebola', 'Sem Picles', 'Sem Tomate', 'Sem Alface'];
+    const REMOVALS = ['Sem Cebola', 'Sem Picles', 'Sem Tomate', 'Sem Molho'];
+    const COMBO_DRINKS = ['Cola 500ml', 'Guaraná 500ml', 'Suco Laranja'];
+    const COMBO_UPGRADE_PRICE = 12.00;
 
-    // Upsell rápido no carrinho (1 clique)
     const UPSELL_ITEMS = [
-      { id: 'up_fries', name: 'Batata Frita', price: 11.90, emoji: '🍟', category: 'acompanhamentos' },
-      { id: 'up_soda', name: 'Refrigerante Lata', price: 7.50, emoji: '🥤', category: 'bebidas' },
-      { id: 'up_brownie', name: 'Brownie', price: 13.90, emoji: '🍫', category: 'sobremesas' }
+      {
+        id: 'up_icecream',
+        name: 'Casquinha Baunilha',
+        price: 5.90,
+        emoji: '🍦',
+        printerSectors: ['bebidas']
+      },
+      {
+        id: 'up_sauce',
+        name: 'Molho Cheddar',
+        price: 4.50,
+        emoji: '🧀',
+        printerSectors: ['cozinha']
+      },
+      {
+        id: 'up_nuggets',
+        name: 'Nuggets (6 unid.)',
+        price: 11.90,
+        emoji: '🍗',
+        printerSectors: ['cozinha']
+      }
     ];
 
     /* -------------------------------------------------------------------
-       3. ESTADO GLOBAL DO TOTEM
+       2. ESTADO GLOBAL DA APLICAÇÃO
     -------------------------------------------------------------------- */
     const state = {
       consumptionMode: 'Comer Aqui',
-      activeCategory: 'lanches',
+      activeCategory: 'combos',
       cart: [],
       orderCounter: 42,
       paymentMethod: 'pix',
@@ -1233,8 +1018,8 @@
       successCountdownInterval: null,
       successSecondsLeft: 20,
       successCountdownPaused: false,
-      pendingConfirmAction: null,
 
+      // Estado temporário do Modal de Personalização
       modal: {
         product: null,
         isComboUpgrade: false,
@@ -1246,22 +1031,22 @@
     };
 
     /* -------------------------------------------------------------------
-       4. UTILITÁRIOS
+       3. UTILITÁRIOS DE FORMATAÇÃO E FEEDBACK
     -------------------------------------------------------------------- */
     function formatBRL(value) {
       return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    let toastTimer = null;
-    function showToast(message, icon = '✓') {
+    let toastTimeout = null;
+    function showToast(message, icon = '✅') {
       const toast = document.getElementById('toast');
       document.getElementById('toast-icon').textContent = icon;
       document.getElementById('toast-message').textContent = message;
       toast.classList.remove('opacity-0', '-translate-y-4');
       toast.classList.add('opacity-100', 'translate-y-0');
 
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => {
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
         toast.classList.add('opacity-0', '-translate-y-4');
         toast.classList.remove('opacity-100', 'translate-y-0');
       }, 2200);
@@ -1276,7 +1061,7 @@
     }
 
     /* -------------------------------------------------------------------
-       5. NAVEGAÇÃO INICIAL E CARDÁPIO
+       4. FLUXO INICIAL E CARDÁPIO
     -------------------------------------------------------------------- */
     function startOrder(mode) {
       state.consumptionMode = mode;
@@ -1290,7 +1075,7 @@
     function toggleConsumptionMode() {
       state.consumptionMode = state.consumptionMode === 'Comer Aqui' ? 'Para Viagem' : 'Comer Aqui';
       updateModeBadges();
-      showToast(`Tipo de consumo: ${state.consumptionMode}`, state.consumptionMode === 'Comer Aqui' ? '🍽️' : '🛍️');
+      showToast(`Modo alterado para: ${state.consumptionMode}`, state.consumptionMode === 'Comer Aqui' ? '🍽️' : '🛍️');
     }
 
     function updateModeBadges() {
@@ -1314,12 +1099,14 @@
         return `
           <button
             onclick="selectCategory('${cat.id}')"
-            class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition active:scale-95 shrink-0 cursor-pointer text-left ${
-              active ? 'cat-btn-active font-bold' : 'cat-btn-idle font-medium'
+            class="flex md:flex-col items-center justify-center gap-2 px-4 py-3 md:py-4 rounded-2xl transition active:scale-95 shrink-0 cursor-pointer border-2 ${
+              active
+                ? 'bg-brandRed text-white border-brandRed shadow-md'
+                : 'bg-slate-50 hover:bg-amber-50 text-slate-700 border-transparent'
             }"
           >
-            <span class="text-2xl leading-none">${cat.icon}</span>
-            <span class="text-xs sm:text-sm leading-tight whitespace-nowrap md:whitespace-normal">${cat.name}</span>
+            <span class="text-2xl md:text-3xl leading-none">${cat.icon}</span>
+            <span class="font-display font-extrabold text-xs md:text-sm text-center leading-tight">${cat.name}</span>
           </button>
         `;
       }).join('');
@@ -1331,87 +1118,54 @@
 
       document.getElementById('current-category-title').textContent = cat.name;
       document.getElementById('current-category-subtitle').textContent = cat.subtitle;
-      document.getElementById('current-category-count').textContent = `${list.length} ${list.length === 1 ? 'opção' : 'opções'}`;
+      document.getElementById('current-category-count').textContent = `${list.length} ${list.length === 1 ? 'item' : 'itens'}`;
 
       const grid = document.getElementById('product-grid');
-      grid.innerHTML = list.map(prod => {
-        const actionLabel = prod.customizable ? 'Personalizar' : 'Adicionar';
-        const onClickHandler = prod.customizable
-          ? `openProductModal('${prod.id}')`
-          : `quickAddProduct('${prod.id}')`;
+      grid.innerHTML = list.map(prod => `
+        <article
+          onclick="openProductModal('${prod.id}')"
+          class="group bg-white rounded-3xl overflow-hidden shadow-card border border-slate-100 hover:border-brandYellow transition-all duration-150 active:scale-[0.98] flex flex-col cursor-pointer"
+        >
+          <div class="relative h-44 sm:h-48 bg-slate-100 overflow-hidden">
+            <img
+              src="${prod.img}"
+              alt="${prod.name}"
+              loading="lazy"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              onerror="this.src='https://placehold.co/600x400/F1F5F9/DA291C?text=${encodeURIComponent(prod.name)}'"
+            />
+            ${prod.badge ? `
+              <span class="absolute top-3 left-3 bg-brandYellow text-slate-900 font-display font-extrabold text-[11px] uppercase tracking-wide px-3 py-1 rounded-full shadow">
+                ${prod.badge}
+              </span>
+            ` : ''}
+          </div>
 
-        return `
-          <article class="product-card rounded-3xl overflow-hidden flex flex-col">
-            <!-- Container SVG Estilizado -->
-            <div onclick="${onClickHandler}" class="relative h-44 art-stage flex items-center justify-center p-5 cursor-pointer">
-              <div class="w-36 h-28">
-                ${getProductSVG(prod.art)}
-              </div>
-              ${prod.badge ? `
-                <span class="absolute top-3 left-3 badge-gold font-bold text-[10px] uppercase tracking-wider px-3 py-1 rounded-full shadow-sm">
-                  ${prod.badge}
-                </span>
-              ` : ''}
+          <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="font-display font-extrabold text-lg text-slate-900 leading-snug group-hover:text-brandRed transition-colors">
+                ${prod.name}
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                ${prod.desc}
+              </p>
             </div>
 
-            <!-- Informações e Botão -->
-            <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-              <div onclick="${onClickHandler}" class="cursor-pointer">
-                <h3 class="font-bold text-base sm:text-lg text-dark leading-snug">
-                  ${prod.name}
-                </h3>
-                <p class="text-xs text-muted mt-1 line-clamp-2 leading-relaxed">
-                  ${prod.desc}
-                </p>
-              </div>
-
-              <div class="mt-4 pt-3.5 border-t border-theme flex items-center justify-between gap-2">
-                <span class="font-extrabold text-xl text-dark">
-                  ${formatBRL(prod.price)}
-                </span>
-                <button
-                  onclick="${onClickHandler}"
-                  class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm cursor-pointer transition active:scale-95 ${
-                    prod.customizable
-                      ? 'btn-gold'
-                      : 'bg-primary-container text-on-primary border border-gold hover:brightness-95'
-                  }"
-                >
-                  ${prod.customizable ? '✨ ' : '+ '}${actionLabel}
-                </button>
-              </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+              <span class="font-display font-black text-xl sm:text-2xl text-slate-900">
+                ${formatBRL(prod.price)}
+              </span>
+              <span class="w-10 h-10 rounded-xl bg-brandRed text-white font-black text-xl flex items-center justify-center shadow-sm group-hover:bg-brandRedDark">
+                +
+              </span>
             </div>
-          </article>
-        `;
-      }).join('');
-    }
-
-    function quickAddProduct(productId) {
-      const prod = PRODUCTS.find(p => p.id === productId);
-      if (!prod) return;
-
-      const existing = state.cart.find(item => item.productId === productId && item.notes.length === 0);
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        state.cart.push({
-          uid: Date.now() + Math.random().toString(16).slice(2),
-          productId: prod.id,
-          name: prod.name,
-          category: prod.category,
-          isCombo: false,
-          unitPrice: prod.price,
-          qty: 1,
-          notes: []
-        });
-      }
-
-      updateCartBar();
-      showToast(`${prod.name} adicionado!`, '🛒');
+          </div>
+        </article>
+      `).join('');
     }
 
     /* -------------------------------------------------------------------
-       6. MODAL DE PERSONALIZAÇÃO (LANCHES E COMBOS)
+       5. MODAL DE PERSONALIZAÇÃO DO PRODUTO
     -------------------------------------------------------------------- */
     function openProductModal(productId) {
       const prod = PRODUCTS.find(p => p.id === productId);
@@ -1427,13 +1181,21 @@
       };
 
       const catObj = CATEGORIES.find(c => c.id === prod.category);
-      document.getElementById('modal-prod-art').innerHTML = getProductSVG(prod.art);
+      const imgEl = document.getElementById('modal-prod-img');
+      imgEl.src = prod.img;
+      imgEl.onerror = () => {
+        imgEl.src = `https://placehold.co/600x400/1E293B/FFC72C?text=${encodeURIComponent(prod.name)}`;
+      };
+
       document.getElementById('modal-prod-category').textContent = catObj ? catObj.name : '';
       document.getElementById('modal-prod-name').textContent = prod.name;
       document.getElementById('modal-prod-desc').textContent = prod.desc;
+      document.getElementById('opt-single-price').textContent = formatBRL(prod.price);
 
-      // Toggle de transformar em Combo só aparece para Lanches
-      document.getElementById('section-combo-toggle').classList.toggle('hidden', !prod.canUpgradeToCombo);
+      // Visibilidade das seções conforme tipo do produto
+      document.getElementById('section-combo-choice').classList.toggle('hidden', !prod.canUpgradeToCombo);
+      document.getElementById('section-extras').classList.toggle('hidden', !prod.customizable);
+      document.getElementById('section-removals').classList.toggle('hidden', !prod.customizable);
 
       renderModalOptions();
       document.getElementById('modal-product').classList.remove('hidden');
@@ -1443,8 +1205,8 @@
       document.getElementById('modal-product').classList.add('hidden');
     }
 
-    function toggleComboUpgrade() {
-      state.modal.isComboUpgrade = !state.modal.isComboUpgrade;
+    function selectBurgerFormat(isCombo) {
+      state.modal.isComboUpgrade = isCombo;
       renderModalOptions();
     }
 
@@ -1492,77 +1254,72 @@
 
     function renderModalOptions() {
       const m = state.modal;
-      const isComboActive = Boolean(m.product.isCombo || m.isComboUpgrade);
 
-      // Atualiza visual do botão Toggle Combo
-      const btnToggle = document.getElementById('btn-toggle-combo');
-      const track = document.getElementById('combo-switch-track');
-      const thumb = document.getElementById('combo-switch-thumb');
-
+      // Estilo dos cards Apenas Lanche / Combo
+      const btnSingle = document.getElementById('opt-single-burger');
+      const btnCombo = document.getElementById('opt-combo-burger');
       if (m.isComboUpgrade) {
-        btnToggle.style.borderColor = 'var(--dourado-base)';
-        btnToggle.style.backgroundColor = 'var(--primary-container)';
-        track.style.backgroundColor = 'var(--success)';
-        thumb.style.transform = 'translateX(24px)';
+        btnCombo.className = 'p-4 rounded-2xl border-2 border-brandGreen bg-green-50/70 text-left transition active:scale-95 cursor-pointer relative';
+        btnSingle.className = 'p-4 rounded-2xl border-2 border-slate-200 bg-white text-left transition active:scale-95 cursor-pointer';
       } else {
-        btnToggle.style.borderColor = 'var(--border)';
-        btnToggle.style.backgroundColor = 'var(--surface)';
-        track.style.backgroundColor = '#cbd5e1';
-        thumb.style.transform = 'translateX(0px)';
+        btnSingle.className = 'p-4 rounded-2xl border-2 border-brandRed bg-red-50/60 text-left transition active:scale-95 cursor-pointer';
+        btnCombo.className = 'p-4 rounded-2xl border-2 border-slate-200 bg-white text-left transition active:scale-95 cursor-pointer relative';
       }
 
-      // Bebida do Combo
+      // Bebida do combo
       const drinkSection = document.getElementById('section-combo-drink');
-      drinkSection.classList.toggle('hidden', !isComboActive);
+      drinkSection.classList.toggle('hidden', !m.isComboUpgrade);
       document.getElementById('combo-drink-options').innerHTML = COMBO_DRINKS.map(drink => {
         const active = m.comboDrink === drink;
         return `
           <button
             onclick="selectComboDrink('${drink}')"
-            class="py-2.5 px-3 rounded-xl text-xs font-bold border-2 transition cursor-pointer ${
+            class="py-2.5 px-2 rounded-xl text-xs font-bold border-2 transition cursor-pointer ${
               active
-                ? 'cat-btn-active'
-                : 'bg-surface border-theme text-muted hover:text-dark'
+                ? 'bg-brandRed text-white border-brandRed'
+                : 'bg-white text-slate-700 border-slate-200 hover:border-brandYellow'
             }"
           >
-            🥤 ${drink}
+            ${drink}
           </button>
         `;
       }).join('');
 
-      // Adicionais Pagos
+      // Adicionais pagos
       document.getElementById('extras-list').innerHTML = EXTRAS.map(ex => {
         const selected = m.selectedExtras.includes(ex.id);
         return `
           <button
             onclick="toggleExtra('${ex.id}')"
             class="flex items-center justify-between p-3.5 rounded-2xl border-2 transition active:scale-95 cursor-pointer ${
-              selected ? 'cat-btn-active' : 'bg-surface border-theme text-dark hover:bg-surface-alt'
+              selected
+                ? 'border-brandGreen bg-green-50/70 text-slate-900'
+                : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
             }"
           >
             <div class="flex items-center gap-2.5 text-left">
-              <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold ${
-                selected ? 'badge-success' : 'bg-surface-alt text-muted'
+              <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black ${
+                selected ? 'bg-brandGreen text-white' : 'bg-slate-100 text-slate-400'
               }">
                 ${selected ? '✓' : '+'}
               </span>
-              <span class="font-semibold text-xs sm:text-sm">${ex.name}</span>
+              <span class="font-bold text-sm">${ex.name}</span>
             </div>
-            <span class="font-bold text-xs sm:text-sm" style="color: var(--primary-dark);">+ ${formatBRL(ex.price)}</span>
+            <span class="font-display font-extrabold text-sm text-brandGreen">+ ${formatBRL(ex.price)}</span>
           </button>
         `;
       }).join('');
 
-      // Retirar Ingredientes (Grátis)
+      // Remoções sem custo
       document.getElementById('removals-list').innerHTML = REMOVALS.map(rem => {
         const selected = m.selectedRemovals.includes(rem);
         return `
           <button
             onclick="toggleRemoval('${rem}')"
-            class="px-4 py-2.5 rounded-xl border-2 font-semibold text-xs sm:text-sm transition active:scale-95 cursor-pointer ${
+            class="px-4 py-2.5 rounded-xl border-2 font-bold text-sm transition active:scale-95 cursor-pointer ${
               selected
-                ? 'badge-danger border-[#c5221f]'
-                : 'bg-surface border-theme text-muted hover:text-dark'
+                ? 'border-brandRed bg-brandRed text-white'
+                : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
             }"
           >
             ${selected ? '✕ ' : ''}${rem}
@@ -1570,23 +1327,23 @@
         `;
       }).join('');
 
-      // Quantidade e Preço Total
+      // Quantidade e total dinâmico
       document.getElementById('modal-qty-value').textContent = m.qty;
-      document.getElementById('modal-total-btn').textContent = formatBRL(calculateModalUnitPrice() * m.qty);
+      const total = calculateModalUnitPrice() * m.qty;
+      document.getElementById('modal-total-btn').textContent = formatBRL(total);
     }
 
     function confirmAddToCart() {
       const m = state.modal;
       if (!m.product) return;
 
-      const isComboFinal = Boolean(m.product.isCombo || m.isComboUpgrade);
       const unitPrice = calculateModalUnitPrice();
       const notes = [];
+      let sectors = [...m.product.printerSectors];
 
       if (m.isComboUpgrade) {
         notes.push(`Combo: Batata M + ${m.comboDrink}`);
-      } else if (m.product.isCombo) {
-        notes.push(`Bebida: ${m.comboDrink}`);
+        if (!sectors.includes('bebidas')) sectors.push('bebidas');
       }
 
       m.selectedExtras.forEach(exId => {
@@ -1596,31 +1353,27 @@
 
       m.selectedRemovals.forEach(rem => notes.push(rem));
 
-      const itemName = m.isComboUpgrade ? `Combo ${m.product.name}` : m.product.name;
-
-      state.cart.push({
+      const cartItem = {
         uid: Date.now() + Math.random().toString(16).slice(2),
-        productId: m.product.id,
-        name: itemName,
-        category: isComboFinal ? 'combos' : m.product.category,
-        isCombo: isComboFinal,
-        comboDrink: isComboFinal ? m.comboDrink : null,
+        name: m.isComboUpgrade ? `Combo ${m.product.name}` : m.product.name,
         unitPrice,
         qty: m.qty,
-        notes
-      });
+        notes,
+        printerSectors: sectors
+      };
 
+      state.cart.push(cartItem);
       updateCartBar();
       closeProductModal();
-      showToast(`${m.qty}x ${itemName} adicionado!`, '🛒');
+      showToast(`${cartItem.qty}x ${cartItem.name} adicionado!`, '🛒');
     }
 
     /* -------------------------------------------------------------------
-       7. CARRINHO, REVISÃO E UPSELL
+       6. CARRINHO E UPSELL
     -------------------------------------------------------------------- */
     function getCartTotals() {
-      const totalItems = state.cart.reduce((acc, item) => acc + item.qty, 0);
-      const totalPrice = state.cart.reduce((acc, item) => acc + item.unitPrice * item.qty, 0);
+      const totalItems = state.cart.reduce((sum, item) => sum + item.qty, 0);
+      const totalPrice = state.cart.reduce((sum, item) => sum + item.unitPrice * item.qty, 0);
       return { totalItems, totalPrice };
     }
 
@@ -1629,7 +1382,6 @@
       document.getElementById('cart-count-badge').textContent = totalItems;
       document.getElementById('cart-total-display').textContent = formatBRL(totalPrice);
       document.getElementById('btn-open-cart').disabled = totalItems === 0;
-      document.getElementById('btn-clear-cart').disabled = totalItems === 0;
     }
 
     function openCartModal() {
@@ -1652,18 +1404,7 @@
       updateCartBar();
       if (state.cart.length === 0) {
         closeCartModal();
-        showToast('Carrinho esvaziado.', '🗑️');
-      } else {
-        renderCartModal();
-      }
-    }
-
-    function removeCartItem(uid) {
-      state.cart = state.cart.filter(i => i.uid !== uid);
-      updateCartBar();
-      if (state.cart.length === 0) {
-        closeCartModal();
-        showToast('Carrinho esvaziado.', '🗑️');
+        showToast('Seu carrinho está vazio.', '🗑️');
       } else {
         renderCartModal();
       }
@@ -1681,76 +1422,63 @@
           uid: Date.now() + Math.random().toString(16).slice(2),
           upsellId,
           name: up.name,
-          category: up.category,
-          isCombo: false,
           unitPrice: up.price,
           qty: 1,
-          notes: ['Oferta rápida']
+          notes: ['Adicionado na revisão'],
+          printerSectors: up.printerSectors
         });
       }
 
       updateCartBar();
       renderCartModal();
-      showToast(`${up.name} adicionado!`, up.emoji);
+      showToast(`${up.name} adicionado ao pedido!`, up.emoji);
     }
 
     function renderCartModal() {
       const container = document.getElementById('cart-items-container');
       container.innerHTML = state.cart.map(item => `
-        <div class="bg-surface-alt border border-theme rounded-2xl p-4 flex items-center justify-between gap-3">
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex items-center justify-between gap-3">
           <div class="flex-1 min-w-0">
-            <h4 class="font-bold text-dark text-sm sm:text-base truncate">${item.name}</h4>
+            <h4 class="font-display font-extrabold text-slate-900 text-base truncate">${item.name}</h4>
             ${item.notes.length > 0 ? `
-              <p class="text-xs text-muted mt-1 leading-relaxed">${item.notes.join(' • ')}</p>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">${item.notes.join(' • ')}</p>
             ` : ''}
-            <span class="inline-block font-extrabold text-sm mt-1.5" style="color: var(--primary-dark);">
+            <span class="inline-block font-display font-black text-brandRed text-sm mt-1.5">
               ${formatBRL(item.unitPrice * item.qty)}
             </span>
           </div>
 
-          <div class="flex items-center gap-2 shrink-0">
-            <div class="flex items-center bg-surface rounded-xl border border-theme p-1">
-              <button
-                onclick="changeCartItemQty('${item.uid}', -1)"
-                class="w-9 h-9 rounded-lg bg-surface-alt hover:bg-primary-container font-bold text-base flex items-center justify-center cursor-pointer"
-                aria-label="Diminuir quantidade"
-              >
-                −
-              </button>
-              <span class="w-8 text-center font-extrabold text-sm text-dark">${item.qty}</span>
-              <button
-                onclick="changeCartItemQty('${item.uid}', 1)"
-                class="w-9 h-9 rounded-lg bg-primary-container text-on-primary font-bold text-base flex items-center justify-center cursor-pointer"
-                aria-label="Aumentar quantidade"
-              >
-                +
-              </button>
-            </div>
+          <div class="flex items-center bg-white rounded-xl border border-slate-200 p-1 shrink-0">
             <button
-              onclick="removeCartItem('${item.uid}')"
-              class="w-9 h-9 rounded-xl btn-danger-soft font-bold text-sm flex items-center justify-center cursor-pointer"
-              title="Excluir item"
-              aria-label="Excluir item"
+              onclick="changeCartItemQty('${item.uid}', -1)"
+              class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-red-50 hover:text-brandRed font-black text-lg flex items-center justify-center cursor-pointer"
             >
-              🗑
+              ${item.qty === 1 ? '🗑' : '−'}
+            </button>
+            <span class="w-8 text-center font-display font-black text-base">${item.qty}</span>
+            <button
+              onclick="changeCartItemQty('${item.uid}', 1)"
+              class="w-9 h-9 rounded-lg bg-brandYellow hover:bg-brandYellowDark font-black text-lg flex items-center justify-center cursor-pointer"
+            >
+              +
             </button>
           </div>
         </div>
       `).join('');
 
-      // Renderiza Faixa de Upsell
+      // Renderiza sugestões de upsell
       document.getElementById('upsell-grid').innerHTML = UPSELL_ITEMS.map(up => `
-        <div class="bg-surface rounded-2xl p-3 border border-theme flex sm:flex-col items-center justify-between gap-2 text-center shadow-theme-sm">
+        <div class="bg-white rounded-2xl p-3 border border-amber-200 flex sm:flex-col items-center justify-between gap-2 text-center shadow-sm">
           <div class="flex sm:flex-col items-center gap-2">
             <span class="text-3xl">${up.emoji}</span>
             <div class="text-left sm:text-center">
-              <div class="font-bold text-xs sm:text-sm text-dark leading-tight">${up.name}</div>
-              <div class="font-extrabold text-xs sm:text-sm mt-0.5" style="color: var(--primary-dark);">${formatBRL(up.price)}</div>
+              <div class="font-display font-extrabold text-xs sm:text-sm text-slate-900 leading-tight">${up.name}</div>
+              <div class="font-display font-black text-sm text-brandRed mt-0.5">${formatBRL(up.price)}</div>
             </div>
           </div>
           <button
             onclick="addUpsellItem('${up.id}')"
-            class="px-3 py-2 sm:w-full rounded-xl bg-primary-container border border-gold text-on-primary hover:brightness-95 active:scale-95 font-bold text-xs transition cursor-pointer"
+            class="px-3 py-2 sm:w-full rounded-xl bg-brandYellow hover:bg-brandYellowDark active:scale-95 text-slate-900 font-extrabold text-xs transition cursor-pointer"
           >
             + Adicionar
           </button>
@@ -1763,7 +1491,7 @@
     }
 
     /* -------------------------------------------------------------------
-       8. PAGAMENTO (PIX COM TIMER DE 5 MIN + CARTÃO)
+       7. PAGAMENTO (PIX COM TEMPORIZADOR + CARTÃO)
     -------------------------------------------------------------------- */
     function goToPayment() {
       if (state.cart.length === 0) return;
@@ -1790,17 +1518,14 @@
       const panelPix = document.getElementById('payment-panel-pix');
       const panelCard = document.getElementById('payment-panel-card');
 
-      const activeClasses = 'p-5 rounded-3xl border-2 text-left transition active:scale-95 flex items-center gap-4 cursor-pointer cat-btn-active';
-      const idleClasses = 'p-5 rounded-3xl border-2 border-theme bg-surface text-left transition active:scale-95 flex items-center gap-4 cursor-pointer hover:bg-surface-alt';
-
       if (method === 'pix') {
-        tabPix.className = activeClasses;
-        tabCard.className = idleClasses;
+        tabPix.className = 'p-5 rounded-3xl border-4 border-brandGreen bg-green-50/70 text-left transition active:scale-95 flex items-center gap-4 cursor-pointer';
+        tabCard.className = 'p-5 rounded-3xl border-4 border-slate-200 bg-white hover:border-slate-300 text-left transition active:scale-95 flex items-center gap-4 cursor-pointer';
         panelPix.classList.remove('hidden');
         panelCard.classList.add('hidden');
       } else {
-        tabCard.className = activeClasses;
-        tabPix.className = idleClasses;
+        tabCard.className = 'p-5 rounded-3xl border-4 border-brandGreen bg-green-50/70 text-left transition active:scale-95 flex items-center gap-4 cursor-pointer';
+        tabPix.className = 'p-5 rounded-3xl border-4 border-slate-200 bg-white hover:border-slate-300 text-left transition active:scale-95 flex items-center gap-4 cursor-pointer';
         panelCard.classList.remove('hidden');
         panelPix.classList.add('hidden');
       }
@@ -1808,13 +1533,13 @@
 
     function startPixTimer() {
       stopPixTimer();
-      state.pixSecondsLeft = 300;
+      state.pixSecondsLeft = 300; // 5 minutos
       updatePixTimerDisplay();
       state.pixTimerInterval = setInterval(() => {
         state.pixSecondsLeft--;
         if (state.pixSecondsLeft <= 0) {
           state.pixSecondsLeft = 300;
-          showToast('QR Code Pix renovado automaticamente.', '🔄');
+          showToast('Novo QR Code Pix gerado automaticamente.', '🔄');
         }
         updatePixTimerDisplay();
       }, 1000);
@@ -1834,43 +1559,27 @@
     }
 
     /* -------------------------------------------------------------------
-       9. CONFIRMAÇÃO, SENHA E ROTEAMENTO SILENCIOSO DE IMPRESSORAS
+       8. CONFIRMAÇÃO, SENHA E SIMULAÇÃO DE ROTEAMENTO DE IMPRESSORAS
     -------------------------------------------------------------------- */
     function completePayment(methodLabel) {
       stopPixTimer();
 
-      const senha = `#${String(state.orderCounter).padStart(3, '0')}`;
+      const senhaFormatada = `#${String(state.orderCounter).padStart(3, '0')}`;
       state.orderCounter += 1;
 
-      document.getElementById('order-password-display').textContent = senha;
+      document.getElementById('order-password-display').textContent = senhaFormatada;
       document.getElementById('success-payment-method').textContent = methodLabel;
       document.getElementById('success-mode-text').textContent = state.consumptionMode;
 
-      simulatePrinterRouting(senha, methodLabel);
+      simulatePrinterRouting(senhaFormatada);
       showScreen('screen-success');
       startSuccessCountdown();
     }
 
-    function simulatePrinterRouting(senha, methodLabel) {
-      // Divisão automática dos itens reais do carrinho por setor:
-      // Cozinha / Chapa -> Lanches, Combos e Acompanhamentos
-      // Bebidas / Bar   -> Bebidas, Sobremesas e bebida vinculada a Combos
-      // Totem / Cliente -> Comprovante e Senha
-      const cozinhaItens = [];
-      const bebidasItens = [];
-
-      state.cart.forEach(item => {
-        if (['lanches', 'combos', 'acompanhamentos'].includes(item.category)) {
-          cozinhaItens.push(`${item.qty}x ${item.name}`);
-        }
-        if (['bebidas', 'sobremesas'].includes(item.category)) {
-          bebidasItens.push(`${item.qty}x ${item.name}`);
-        } else if (item.isCombo && item.comboDrink) {
-          bebidasItens.push(`${item.qty}x ${item.comboDrink} (Combo)`);
-        }
-      });
-
-      const { totalPrice } = getCartTotals();
+    function simulatePrinterRouting(senha) {
+      // Agrupa itens por setor de impressão conforme a lógica de backend Flask -> ESC/POS 9100
+      const cozinhaItens = state.cart.filter(i => i.printerSectors.includes('cozinha'));
+      const bebidasItens = state.cart.filter(i => i.printerSectors.includes('bebidas'));
 
       const jobs = [
         {
@@ -1878,7 +1587,7 @@
           setor: 'Cozinha / Chapa',
           ip: '192.168.1.50:9100',
           icon: '🔥',
-          itens: cozinhaItens,
+          itens: cozinhaItens.map(i => `${i.qty}x ${i.name}`),
           delay: 450
         },
         {
@@ -1886,18 +1595,15 @@
           setor: 'Bebidas / Bar',
           ip: '192.168.1.51:9100',
           icon: '🥤',
-          itens: bebidasItens,
+          itens: bebidasItens.map(i => `${i.qty}x ${i.name}`),
           delay: 800
         },
         {
           id: 'job-cliente',
-          setor: 'Totem / Cliente',
+          setor: 'Totem / Senha Cliente',
           ip: '192.168.1.52:9100',
           icon: '🧾',
-          itens: [
-            `Senha ${senha} • ${state.consumptionMode}`,
-            `Pago (${methodLabel}): ${formatBRL(totalPrice)}`
-          ],
+          itens: [`Cupom Senha ${senha}`, `Consumo: ${state.consumptionMode}`],
           delay: 1100
         }
       ];
@@ -1906,37 +1612,36 @@
       container.innerHTML = jobs.map(job => {
         const hasItems = job.itens.length > 0;
         return `
-          <div class="bg-surface-alt border border-theme rounded-2xl p-4 flex flex-col justify-between">
+          <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-3.5 flex flex-col justify-between">
             <div>
-              <div class="font-bold text-sm text-dark flex items-center gap-1.5">
-                <span>${job.icon}</span>
-                <span>${job.setor}</span>
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <span class="font-display font-bold text-xs sm:text-sm text-white">${job.icon} ${job.setor}</span>
               </div>
-              <div class="font-mono text-[11px] text-muted mt-0.5 mb-2.5">${job.ip}</div>
-              <ul class="text-xs text-dark space-y-1 mb-3">
+              <div class="font-mono text-[11px] text-slate-400 mb-2">${job.ip}</div>
+              <ul class="text-[11px] text-slate-300 space-y-0.5 mb-3">
                 ${hasItems
                   ? job.itens.map(t => `<li class="truncate">• ${t}</li>`).join('')
-                  : '<li class="text-muted italic">Nenhum item para este setor</li>'
+                  : '<li class="text-slate-500 italic">Sem itens para este setor</li>'
                 }
               </ul>
             </div>
-            <div id="${job.id}-status" class="text-[11px] font-bold px-3 py-1.5 rounded-xl inline-flex items-center gap-1.5 w-fit ${
-              hasItems ? 'badge-warning' : 'bg-surface text-muted border border-theme'
+            <div id="${job.id}-status" class="text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg inline-flex items-center gap-1.5 ${
+              hasItems ? 'bg-amber-500/20 text-brandYellow' : 'bg-slate-700/60 text-slate-400'
             }">
-              ${hasItems ? '⏳ Enviando POST...' : '— Sem impressão'}
+              ${hasItems ? '⏳ Enviando POST...' : '— Ignorado'}
             </div>
           </div>
         `;
       }).join('');
 
-      // Simulação assíncrona do retorno de impressão concluída
+      // Simula retorno assíncrono HTTP 200 OK de cada impressora
       jobs.forEach(job => {
         if (job.itens.length === 0) return;
         setTimeout(() => {
           const el = document.getElementById(`${job.id}-status`);
           if (el) {
-            el.className = 'text-[11px] font-bold px-3 py-1.5 rounded-xl inline-flex items-center gap-1.5 w-fit badge-success';
-            el.textContent = '✓ Enviado / Impresso';
+            el.className = 'text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg inline-flex items-center gap-1.5 bg-green-500/20 text-green-400';
+            el.textContent = '✓ 200 OK • Impresso';
           }
         }, job.delay);
       });
@@ -1973,56 +1678,30 @@
     function updateSuccessCountdownUI() {
       const btn = document.getElementById('btn-pause-countdown');
       if (state.successCountdownPaused) {
-        btn.innerHTML = `Contagem pausada (<span id="success-countdown">${state.successSecondsLeft}</span>s) • Retomar`;
+        btn.innerHTML = `Temporizador pausado (<span id="success-countdown">${state.successSecondsLeft}</span>s) • Retomar`;
       } else {
-        btn.innerHTML = `Retornando ao início em <span id="success-countdown">${state.successSecondsLeft}</span>s (Pausar)`;
+        btn.innerHTML = `Voltando em <span id="success-countdown">${state.successSecondsLeft}</span>s (Pausar)`;
       }
     }
 
     /* -------------------------------------------------------------------
-       10. CONFIRMAÇÕES CUSTOMIZADAS (LIMPAR / CANCELAR)
+       9. CANCELAMENTO / REINÍCIO DO PEDIDO
     -------------------------------------------------------------------- */
-    function openConfirmModal(title, desc, actionFn) {
-      document.getElementById('confirm-title').textContent = title;
-      document.getElementById('confirm-desc').textContent = desc;
-      state.pendingConfirmAction = actionFn;
-      document.getElementById('modal-confirm').classList.remove('hidden');
-    }
-
-    function closeConfirmModal() {
-      document.getElementById('modal-confirm').classList.add('hidden');
-      state.pendingConfirmAction = null;
-    }
-
-    function executeConfirmAction() {
-      const fn = state.pendingConfirmAction;
-      closeConfirmModal();
-      if (typeof fn === 'function') fn();
-    }
-
-    function requestClearCart() {
-      if (state.cart.length === 0) return;
-      openConfirmModal(
-        'Limpar carrinho?',
-        'Todos os itens adicionados serão removidos, mas você continuará no cardápio.',
-        () => {
-          state.cart = [];
-          updateCartBar();
-          showToast('Carrinho limpo.', '🗑️');
-        }
-      );
-    }
-
     function requestResetOrder() {
       if (state.cart.length === 0) {
         resetToWelcome();
         return;
       }
-      openConfirmModal(
-        'Cancelar pedido atual?',
-        'Seu carrinho será limpo e voltaremos para a tela inicial do totem.',
-        resetToWelcome
-      );
+      document.getElementById('modal-confirm').classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('modal-confirm').classList.add('hidden');
+    }
+
+    function confirmResetOrder() {
+      closeConfirmModal();
+      resetToWelcome();
     }
 
     function resetToWelcome() {
@@ -2031,7 +1710,7 @@
       closeProductModal();
       closeCartModal();
       state.cart = [];
-      state.activeCategory = 'lanches';
+      state.activeCategory = 'combos';
       updateCartBar();
       showScreen('screen-welcome');
     }
