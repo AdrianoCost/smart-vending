@@ -1,1560 +1,2040 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Vending Machine</title>
-    <style>
-        :root {
-            --bg: #f5f5f7;
-            --primary: #da291c;        /* vermelho McDonald's */
-            --primary-dark: #b71c10;
-            --accent: #ffc72c;         /* amarelo McDonald's */
-            --success: #16a34a;
-            --text-dark: #1f2937;
-            --text-muted: #6b7280;
-            --card-bg: #ffffff;
-            --border: #e5e7eb;
-            --shadow: 0 4px 14px rgba(0,0,0,0.08);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html, body {
-            height: 100%;
-            overflow: hidden;
-        }
-
-        body {
-            background: #1a1a1a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* ============================================
-           TABLET SCREEN — ocupa toda a tela do tablet
-           ============================================ */
-        .tablet-screen {
-            background: var(--bg);
-            width: 100%;
-            height: 100%;
-            max-width: 100%;
-            max-height: 100%;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ============================================
-           TELA DE DESCANSO (TOQUE PARA COMEÇAR)
-           ============================================ */
-        .tela-descanso {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(160deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 40px 24px;
-            z-index: 50;
-            cursor: pointer;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .tela-descanso.visivel {
-            display: flex;
-        }
-
-        .tela-descanso .descanso-logo {
-            background: var(--accent);
-            color: var(--primary-dark);
-            width: 110px;
-            height: 110px;
-            border-radius: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 62px;
-            margin-bottom: 28px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-        }
-
-        .tela-descanso h1 {
-            font-size: 42px;
-            font-weight: 900;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-        }
-
-        .tela-descanso .descanso-sub {
-            font-size: 20px;
-            opacity: 0.92;
-            max-width: 420px;
-            line-height: 1.4;
-            margin-bottom: 44px;
-        }
-
-        .tela-descanso .descanso-cta {
-            background: var(--accent);
-            color: var(--primary-dark);
-            font-size: 22px;
-            font-weight: 900;
-            padding: 20px 44px;
-            border-radius: 18px;
-            box-shadow: 0 10px 24px rgba(0,0,0,0.25);
-            animation: pulseCta 1.8s infinite;
-        }
-
-        @keyframes pulseCta {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        /* ============================================
-           HEADER estilo fast-food
-           ============================================ */
-        header {
-            background: var(--primary);
-            color: white;
-            padding: 14px 28px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-            z-index: 5;
-            flex-shrink: 0;
-        }
-
-        header .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        header .logo-badge {
-            background: var(--accent);
-            color: var(--primary-dark);
-            width: 46px;
-            height: 46px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            font-weight: 900;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
-
-        header .logo-text {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.1;
-        }
-
-        header .logo-text .titulo {
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-        }
-
-        header .logo-text .subtitulo {
-            font-size: 12px;
-            opacity: 0.85;
-            font-weight: 500;
-        }
-
-        header .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        header .btn-header {
-            background: rgba(255,255,255,0.18);
-            border: none;
-            color: white;
-            padding: 10px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: background 0.15s;
-        }
-
-        header .btn-header:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        header .btn-header:active {
-            transform: scale(0.97);
-        }
-
-        /* ============================================
-           ABAS DE CATEGORIAS (rolagem horizontal)
-           ============================================ */
-        .categorias-bar {
-            background: white;
-            display: flex;
-            gap: 10px;
-            padding: 14px 24px;
-            overflow-x: auto;
-            overflow-y: hidden;
-            border-bottom: 1px solid var(--border);
-            scrollbar-width: none;
-            flex-shrink: 0;
-        }
-
-        .categorias-bar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .cat-tab {
-            background: #f3f4f6;
-            border: 2px solid transparent;
-            color: var(--text-dark);
-            padding: 12px 22px;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.18s;
-            flex-shrink: 0;
-        }
-
-        .cat-tab .cat-icone {
-            font-size: 22px;
-        }
-
-        .cat-tab .cat-qtd {
-            font-size: 11px;
-            background: rgba(0,0,0,0.08);
-            padding: 2px 7px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-
-        .cat-tab.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary-dark);
-            box-shadow: 0 4px 12px rgba(218, 41, 28, 0.35);
-        }
-
-        .cat-tab.active .cat-qtd {
-            background: rgba(255,255,255,0.25);
-        }
-
-        /* ============================================
-           GRID DE PRODUTOS (área rolável)
-           ============================================ */
-        .conteudo-produtos {
-            flex: 1;
-            overflow-y: auto;
-            padding: 22px 28px 120px 28px;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .categoria-titulo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 18px;
-        }
-
-        .categoria-titulo .barra {
-            width: 6px;
-            height: 32px;
-            background: var(--primary);
-            border-radius: 4px;
-        }
-
-        .categoria-titulo h2 {
-            font-size: 26px;
-            color: var(--text-dark);
-            font-weight: 800;
-        }
-
-        .categoria-titulo .contagem {
-            margin-left: auto;
-            font-size: 14px;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .grid-produtos {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 18px;
-        }
-
-        .produto-card {
-            background: white;
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            transition: transform 0.18s, box-shadow 0.18s;
-            display: flex;
-            flex-direction: column;
-            border: 2px solid transparent;
-        }
-
-        .produto-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
-            border-color: var(--primary);
-        }
-
-        .produto-card:active {
-            transform: scale(0.97);
-        }
-
-        .produto-card .img-area {
-            background: linear-gradient(135deg, #fff7ed, #ffedd5);
-            height: 130px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 68px;
-            position: relative;
-        }
-
-        .produto-card .badge-estoque {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255,255,255,0.9);
-            color: var(--text-dark);
-            padding: 3px 9px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .produto-card .badge-estoque.baixo {
-            background: #fef3c7;
-            color: #b45309;
-        }
-
-        .produto-card .badge-estoque.esgotado {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .produto-card .info {
-            padding: 14px 16px 16px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            flex: 1;
-        }
-
-        .produto-card .nome {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-dark);
-            line-height: 1.25;
-        }
-
-        .produto-card .preco {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-top: auto;
-        }
-
-        .produto-card .btn-add {
-            margin-top: 8px;
-            background: var(--accent);
-            color: var(--primary-dark);
-            border: none;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .produto-card .btn-add:hover {
-            background: #ffb800;
-        }
-
-        .produto-card .btn-add:active {
-            transform: scale(0.97);
-        }
-
-        .produto-card.esgotado {
-            opacity: 0.55;
-            cursor: not-allowed;
-        }
-
-        .produto-card.esgotado .btn-add {
-            background: #e5e7eb;
-            color: #9ca3af;
-            cursor: not-allowed;
-        }
-
-        /* ============================================
-           BARRA INFERIOR DO CARRINHO (fixa)
-           ============================================ */
-        .carrinho-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 1px solid var(--border);
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
-            padding: 14px 28px;
-            display: none;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            z-index: 15;
-        }
-
-        .carrinho-bar.visivel {
-            display: flex;
-        }
-
-        .carrinho-info {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .carrinho-icone-wrap {
-            position: relative;
-            background: var(--primary);
-            color: white;
-            width: 54px;
-            height: 54px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-        }
-
-        .carrinho-badge {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: var(--accent);
-            color: var(--primary-dark);
-            font-size: 12px;
-            font-weight: 800;
-            min-width: 24px;
-            height: 24px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 5px;
-            border: 2px solid white;
-        }
-
-        .carrinho-total-wrap {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .carrinho-total-wrap .label {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .carrinho-total-wrap .valor {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .btn-finalizar {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 16px 36px;
-            border-radius: 14px;
-            font-size: 17px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: background 0.15s, transform 0.1s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-finalizar:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-finalizar:active {
-            transform: scale(0.97);
-        }
-
-        /* ============================================
-           MODAL DE PAGAMENTO PIX
-           ============================================ */
-        .modal {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.75);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 24px;
-            z-index: 30;
-            backdrop-filter: blur(4px);
-        }
-
-        .modal.visivel {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            width: 100%;
-            max-width: 520px;
-            border-radius: 24px;
-            padding: 32px 28px;
-            text-align: center;
-            position: relative;
-            animation: modalIn 0.25s ease;
-        }
-
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.92); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .fechar-modal {
-            position: absolute;
-            top: 16px;
-            left: 16px;
-            background: #f3f4f6;
-            border: none;
-            font-size: 16px;
-            color: var(--text-dark);
-            cursor: pointer;
-            font-weight: 700;
-            padding: 8px 14px;
-            border-radius: 10px;
-        }
-
-        .modal-titulo {
-            font-size: 24px;
-            color: var(--text-dark);
-            margin-bottom: 4px;
-            font-weight: 800;
-        }
-
-        .modal-subtitulo {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            font-weight: 600;
-        }
-
-        .pix-timer {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #fef3c7;
-            color: #b45309;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .pix-timer.urgente {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .qr-placeholder {
-            width: 220px;
-            height: 220px;
-            background: #ffffff;
-            border: 3px solid var(--border);
-            margin: 12px auto 16px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 16px;
-            padding: 14px;
-            position: relative;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        }
-
-        .qr-placeholder svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .modal-total {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--primary);
-            margin: 8px 0;
-        }
-
-        .instrucao {
-            font-size: 15px;
-            color: #4b5563;
-            margin-bottom: 18px;
-            line-height: 1.5;
-        }
-
-        .btn-simular {
-            background: var(--success);
-            color: white;
-            border: none;
-            padding: 16px 30px;
-            font-size: 17px;
-            border-radius: 14px;
-            cursor: pointer;
-            font-weight: 800;
-            width: 100%;
-            transition: background 0.15s;
-        }
-
-        .btn-simular:hover {
-            background: #15803d;
-        }
-
-        .btn-simular:active {
-            transform: scale(0.98);
-        }
-
-        /* ============================================
-           TELA DE SUCESSO / FILA DE LIBERAÇÃO
-           ============================================ */
-        .tela-sucesso {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, #16a34a, #15803d);
-            color: white;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 40;
-            text-align: center;
-            padding: 40px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .tela-sucesso.visivel {
-            display: flex;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .tela-sucesso .icone-ok {
-            font-size: 110px;
-            margin-bottom: 20px;
-            animation: popIn 0.5s ease;
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0); }
-            70% { transform: scale(1.15); }
-            100% { transform: scale(1); }
-        }
-
-        .tela-sucesso h2 {
-            font-size: 38px;
-            margin-bottom: 12px;
-            font-weight: 800;
-        }
-
-        .tela-sucesso p {
-            font-size: 20px;
-            opacity: 0.95;
-            line-height: 1.5;
-        }
-
-        .barra-progresso-wrap {
-            width: 100%;
-            max-width: 380px;
-            height: 14px;
-            background: rgba(255,255,255,0.25);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 22px;
-        }
-
-        .barra-progresso-fill {
-            height: 100%;
-            width: 0%;
-            background: var(--accent);
-            border-radius: 10px;
-            transition: width 0.4s ease;
-        }
-
-        .tela-sucesso .destaque {
-            font-size: 22px;
-            font-weight: 800;
-            margin-top: 28px;
-            background: rgba(255,255,255,0.2);
-            padding: 14px 28px;
-            border-radius: 14px;
-        }
-
-        /* ============================================
-           MODAL DO CARRINHO
-           ============================================ */
-        .modal-carrinho .modal-content {
-            max-width: 560px;
-            text-align: left;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        .modal-carrinho .modal-header {
-            background: var(--primary);
-            color: white;
-            padding: 20px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .modal-carrinho .modal-header h3 {
-            font-size: 22px;
-            font-weight: 800;
-        }
-
-        .modal-carrinho .modal-header .fechar-carrinho {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-weight: 700;
-        }
-
-        .lista-carrinho {
-            max-height: 45vh;
-            overflow-y: auto;
-            padding: 16px 20px;
-        }
-
-        .item-carrinho {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .item-carrinho .item-img {
-            width: 50px;
-            height: 50px;
-            background: #fff7ed;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            flex-shrink: 0;
-        }
-
-        .item-carrinho .item-info {
-            flex: 1;
-        }
-
-        .item-carrinho .item-nome {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .item-carrinho .item-preco {
-            font-size: 14px;
-            color: var(--primary);
-            font-weight: 700;
-            margin-top: 2px;
-        }
-
-        .item-carrinho .item-qtd {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .item-carrinho .item-qtd button {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: white;
-            font-size: 18px;
-            font-weight: 800;
-            cursor: pointer;
-            color: var(--text-dark);
-        }
-
-        .item-carrinho .item-qtd button:hover {
-            background: #f3f4f6;
-        }
-
-        .item-carrinho .item-qtd span {
-            font-size: 16px;
-            font-weight: 800;
-            min-width: 24px;
-            text-align: center;
-        }
-
-        .carrinho-vazio {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-        }
-
-        .carrinho-vazio .emoji {
-            font-size: 60px;
-            margin-bottom: 12px;
-        }
-
-        .modal-carrinho .carrinho-footer {
-            padding: 20px 24px;
-            border-top: 1px solid var(--border);
-            background: #f9fafb;
-        }
-
-        .modal-carrinho .carrinho-total-linha {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-        }
-
-        .modal-carrinho .carrinho-total-linha .label {
-            font-size: 15px;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .modal-carrinho .carrinho-total-linha .valor {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .btn-pagar-carrinho {
-            width: 100%;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 16px;
-            border-radius: 14px;
-            font-size: 18px;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .btn-pagar-carrinho:hover {
-            background: var(--primary-dark);
-        }
-
-        /* ============================================
-           RESPONSIVIDADE PARA TABLET (paisagem e retrato)
-           ============================================ */
-        @media (min-width: 768px) {
-            header { padding: 18px 40px; }
-            header .logo-badge { width: 54px; height: 54px; font-size: 30px; }
-            header .logo-text .titulo { font-size: 24px; }
-            header .logo-text .subtitulo { font-size: 14px; }
-            .categorias-bar { padding: 16px 36px; gap: 12px; }
-            .cat-tab { padding: 14px 26px; font-size: 16px; }
-            .cat-tab .cat-icone { font-size: 26px; }
-            .conteudo-produtos { padding: 26px 40px 130px 40px; }
-            .categoria-titulo h2 { font-size: 30px; }
-            .grid-produtos {
-                grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-                gap: 22px;
-            }
-            .produto-card .img-area { height: 150px; font-size: 80px; }
-            .produto-card .nome { font-size: 18px; }
-            .produto-card .preco { font-size: 22px; }
-            .carrinho-bar { padding: 18px 40px; }
-        }
-
-        @media (min-width: 1024px) {
-            .grid-produtos {
-                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-                gap: 26px;
-            }
-            .produto-card .img-area { height: 170px; font-size: 90px; }
-            .conteudo-produtos { padding: 30px 50px 140px 50px; }
-        }
-
-        /* Paisagem no tablet: grid maior e header mais compacto */
-        @media (orientation: landscape) and (min-width: 900px) {
-            header { padding: 12px 32px; }
-            header .logo-badge { width: 44px; height: 44px; font-size: 24px; }
-            header .logo-text .titulo { font-size: 20px; }
-            .categorias-bar { padding: 10px 32px; }
-            .cat-tab { padding: 10px 20px; font-size: 14px; }
-            .conteudo-produtos { padding: 20px 32px 110px 32px; }
-            .grid-produtos {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 18px;
-            }
-            .produto-card .img-area { height: 130px; font-size: 70px; }
-            .carrinho-bar { padding: 12px 32px; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maison Burger — Totem de Autoatendimento</title>
+
+  <!-- Google Fonts: Poppins (pesos 400, 500, 600, 700, 800) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* =====================================================================
+       IDENTIDADE VISUAL OFICIAL (:root)
+    ====================================================================== */
+    :root {
+      --fundo-logo-vermelho: radial-gradient(circle at 35% 30%, #9c000e 0%, #6b0008 48%, #2b0003 100%);
+      --dourado-base: #ccae62;
+      --gradiente-dourado: linear-gradient(90deg, #8c6d3f 0%, #caae65 50%, #8c6d3f 100%);
+      --fonte-principal: 'Poppins', sans-serif;
+
+      --bg: #f8fafd;
+      --surface: #ffffff;
+      --surface-alt: #f4f1ea;
+      --primary: var(--dourado-base);
+      --primary-dark: #8c6d3f;
+      --primary-container: #f5ecd4;
+      --on-primary-container: #4a3719;
+      --success: #188038;
+      --success-bg: #e6f4ea;
+      --warning-bg: #fef7e0;
+      --warning-text: #b06000;
+      --danger-bg: #fce8e6;
+      --danger-text: #c5221f;
+      --text-dark: #1f1f1f;
+      --text-muted: #5f6368;
+      --border: #e2dcd0;
+      --shadow-sm: 0 1px 2px rgba(60, 64, 67, 0.12), 0 1px 3px 1px rgba(60, 64, 67, 0.08);
+      --shadow-md: 0 4px 12px rgba(60, 64, 67, 0.16);
+    }
+
+    /* Configurações globais de tipografia e toque */
+    * {
+      font-family: var(--fonte-principal);
+      box-sizing: border-box;
+    }
+
+    html, body {
+      background-color: var(--bg);
+      color: var(--text-dark);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    /* Classes utilitárias ligadas diretamente às variáveis CSS */
+    .bg-crimson-radial {
+      background: var(--fundo-logo-vermelho);
+    }
+
+    .bg-gold-gradient {
+      background: var(--gradiente-dourado);
+    }
+
+    .bg-app { background-color: var(--bg); }
+    .bg-surface { background-color: var(--surface); }
+    .bg-surface-alt { background-color: var(--surface-alt); }
+    .bg-primary-container { background-color: var(--primary-container); }
+
+    .text-dark { color: var(--text-dark); }
+    .text-muted { color: var(--text-muted); }
+    .text-gold { color: var(--dourado-base); }
+    .text-primary-dark { color: var(--primary-dark); }
+    .text-on-primary { color: var(--on-primary-container); }
+
+    .border-theme { border-color: var(--border); }
+    .border-gold { border-color: var(--dourado-base); }
+
+    .shadow-theme-sm { box-shadow: var(--shadow-sm); }
+    .shadow-theme-md { box-shadow: var(--shadow-md); }
+
+    /* Badges semânticos */
+    .badge-success {
+      background-color: var(--success-bg);
+      color: var(--success);
+    }
+    .badge-warning {
+      background-color: var(--warning-bg);
+      color: var(--warning-text);
+    }
+    .badge-danger {
+      background-color: var(--danger-bg);
+      color: var(--danger-text);
+    }
+    .badge-gold {
+      background-color: var(--primary-container);
+      color: var(--on-primary-container);
+      border: 1px solid var(--dourado-base);
+    }
+
+    /* Botão principal dourado metálico */
+    .btn-gold {
+      background: var(--gradiente-dourado);
+      color: #ffffff;
+      text-shadow: 0 1px 2px rgba(43, 0, 3, 0.35);
+      box-shadow: var(--shadow-md);
+      transition: transform 0.14s ease, filter 0.14s ease, opacity 0.14s ease;
+    }
+    .btn-gold:hover:not(:disabled) {
+      filter: brightness(1.06);
+    }
+    .btn-gold:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+    .btn-gold:disabled {
+      background: #d5cfc3;
+      color: #ffffff;
+      text-shadow: none;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* Botão secundário de perigo/cancelamento */
+    .btn-danger-soft {
+      background-color: var(--danger-bg);
+      color: var(--danger-text);
+      transition: transform 0.14s ease, filter 0.14s ease;
+    }
+    .btn-danger-soft:hover {
+      filter: brightness(0.96);
+    }
+    .btn-danger-soft:active {
+      transform: scale(0.97);
+    }
+
+    /* Categoria ativa na barra lateral */
+    .cat-btn-active {
+      background-color: var(--primary-container);
+      border: 2px solid var(--dourado-base);
+      color: var(--on-primary-container);
+      box-shadow: var(--shadow-sm);
+    }
+    .cat-btn-idle {
+      background-color: var(--surface);
+      border: 2px solid transparent;
+      color: var(--text-muted);
+    }
+    .cat-btn-idle:hover {
+      background-color: var(--surface-alt);
+      color: var(--text-dark);
+    }
+
+    /* Cartão de produto com elevação suave */
+    .product-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+    }
+    .product-card:hover {
+      border-color: var(--dourado-base);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .product-card:active {
+      transform: scale(0.98);
+    }
+
+    /* Container visual elegante para ilustrações SVG */
+    .art-stage {
+      background: radial-gradient(circle at 50% 45%, #ffffff 0%, var(--surface-alt) 100%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Barras de rolagem sutis */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 9999px;
+    }
+
+    /* Animações */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(14px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .animate-modal {
+      animation: fadeSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-float {
+      animation: floatSlow 3.4s ease-in-out infinite;
+    }
+  </style>
 </head>
-<body>
+<body class="bg-app text-dark min-h-screen overflow-x-hidden">
 
-    <div class="tablet-screen">
-        <!-- TELA DE DESCANSO -->
-        <div class="tela-descanso visivel" id="telaDescanso" onclick="sairDescanso()">
-            <div class="descanso-logo">🛒</div>
-            <h1>Smart Vending</h1>
-            <p class="descanso-sub">Escolha seus produtos, pague rápido com Pix e retire na hora.</p>
-            <div class="descanso-cta">TOQUE PARA COMEÇAR</div>
+  <!-- =====================================================================
+       1. TELA INICIAL (BOAS-VINDAS / SELEÇÃO DE CONSUMO)
+  ====================================================================== -->
+  <section id="screen-welcome" class="min-h-screen flex flex-col justify-between relative overflow-hidden bg-crimson-radial text-white">
+    <!-- Brilhos dourados sutis ao fundo -->
+    <div class="absolute -top-28 -right-24 w-96 h-96 rounded-full opacity-15 blur-3xl pointer-events-none" style="background: var(--dourado-base);"></div>
+    <div class="absolute -bottom-32 -left-24 w-[28rem] h-[28rem] rounded-full opacity-10 blur-3xl pointer-events-none" style="background: var(--dourado-base);"></div>
+
+    <!-- Barra Superior da Tela Inicial -->
+    <header class="relative z-10 flex items-center justify-between px-6 sm:px-10 pt-6 sm:pt-8">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-xl bg-gold-gradient flex items-center justify-center shadow-theme-md border border-white/20">
+          <!-- Emblema Coroa/Burger SVG -->
+          <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M5 16L3 7l5.5 4L12 5l3.5 6L21 7l-2 9H5zm0 2h14v2H5v-2z"/>
+          </svg>
+        </div>
+        <div>
+          <span class="font-extrabold text-lg sm:text-xl tracking-wide block leading-none">MAISON BURGER</span>
+          <span class="text-[11px] sm:text-xs tracking-widest uppercase" style="color: var(--dourado-base);">Craft Fast Food</span>
+        </div>
+      </div>
+
+      <div class="px-4 py-2 rounded-full bg-black/25 border border-white/15 backdrop-blur-sm text-xs font-semibold flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full animate-pulse" style="background-color: #4ade80;"></span>
+        <span>Totem #01 • Pronto</span>
+      </div>
+    </header>
+
+    <!-- Conteúdo Central -->
+    <main class="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-8 text-center max-w-4xl mx-auto w-full">
+      <!-- Emblema Principal Dourado -->
+      <div class="mb-6 animate-float">
+        <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-black/25 border-2 flex items-center justify-center shadow-2xl mx-auto p-4" style="border-color: var(--dourado-base);">
+          <svg viewBox="0 0 96 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg" aria-label="Logo Maison Burger">
+            <defs>
+              <linearGradient id="logoGold" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#8c6d3f"/>
+                <stop offset="50%" stop-color="#f0d999"/>
+                <stop offset="100%" stop-color="#8c6d3f"/>
+              </linearGradient>
+            </defs>
+            <!-- Pão superior -->
+            <path d="M16 44 C16 24, 80 24, 80 44 Z" fill="url(#logoGold)" />
+            <circle cx="36" cy="34" r="2.2" fill="#4a3719" opacity="0.6"/>
+            <circle cx="50" cy="31" r="2.2" fill="#4a3719" opacity="0.6"/>
+            <circle cx="62" cy="35" r="2.2" fill="#4a3719" opacity="0.6"/>
+            <!-- Queijo derretido -->
+            <path d="M14 48 H82 L75 56 L64 51 L52 57 L40 51 L26 56 Z" fill="#f5ecd4" />
+            <!-- Carne artesanal -->
+            <rect x="15" y="54" width="66" height="11" rx="5.5" fill="#4a1c17" stroke="url(#logoGold)" stroke-width="2" />
+            <!-- Pão inferior -->
+            <path d="M18 68 H78 C78 76, 72 80, 64 80 H32 C24 80, 18 76, 18 68 Z" fill="url(#logoGold)" />
+          </svg>
+        </div>
+      </div>
+
+      <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold tracking-wider uppercase mb-4 bg-black/25 border" style="border-color: var(--dourado-base); color: var(--dourado-base);">
+        ★ Autoatendimento Exclusivo
+      </span>
+
+      <h1 class="font-extrabold text-3xl sm:text-5xl lg:text-6xl leading-tight tracking-tight mb-3">
+        Sabor Artesanal,<br class="hidden sm:inline" />
+        <span style="color: var(--dourado-base);">Pedido em Segundos</span>
+      </h1>
+
+      <p class="text-white/80 text-sm sm:text-lg max-w-xl mb-10 font-normal">
+        Monte seu lanche do seu jeito, pague direto na tela com Pix ou Cartão e acompanhe sua senha no balcão.
+      </p>
+
+      <!-- Dois Grandes Botões Táteis -->
+      <div class="w-full max-w-2xl">
+        <p class="text-sm sm:text-base font-semibold text-white/90 mb-4">
+          Como deseja aproveitar seu pedido hoje?
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <button
+            onclick="startOrder('Comer Aqui')"
+            class="group bg-surface text-dark rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-transparent hover:border-[#ccae62] active:scale-95 transition-all duration-150 flex flex-col items-center justify-center gap-3 cursor-pointer"
+          >
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary-container border border-gold flex items-center justify-center text-4xl group-hover:scale-105 transition-transform">
+              🍽️
+            </div>
+            <span class="font-extrabold text-2xl sm:text-3xl text-dark">Comer Aqui</span>
+            <span class="text-xs sm:text-sm text-muted font-medium">Servido na bandeja no salão</span>
+          </button>
+
+          <button
+            onclick="startOrder('Para Viagem')"
+            class="group btn-gold rounded-3xl p-6 sm:p-8 border-2 border-white/30 flex flex-col items-center justify-center gap-3 cursor-pointer"
+          >
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/35 flex items-center justify-center text-4xl group-hover:scale-105 transition-transform">
+              🛍️
+            </div>
+            <span class="font-extrabold text-2xl sm:text-3xl text-white">Para Viagem</span>
+            <span class="text-xs sm:text-sm text-white/90 font-medium">Embalagem térmica para levar</span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="relative z-10 text-center pb-6 px-4 text-xs sm:text-sm text-white/75 font-medium">
+      Aceitamos <strong class="text-white">Pix (QR Code na tela)</strong> e <strong class="text-white">Cartão de Crédito / Débito</strong>
+    </footer>
+  </section>
+
+
+  <!-- =====================================================================
+       2. TELA DE CARDÁPIO (TOP BAR + CATEGORIAS + GRADE + BARRA DO CARRINHO)
+  ====================================================================== -->
+  <section id="screen-menu" class="hidden min-h-screen flex flex-col bg-app">
+    <!-- Top Bar em var(--fundo-logo-vermelho) -->
+    <header class="sticky top-0 z-30 bg-crimson-radial text-white px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between shadow-theme-md border-b-2" style="border-color: var(--dourado-base);">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gold-gradient flex items-center justify-center shadow-md shrink-0">
+          <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M5 16L3 7l5.5 4L12 5l3.5 6L21 7l-2 9H5zm0 2h14v2H5v-2z"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="font-extrabold text-base sm:text-xl tracking-wide leading-none">MAISON BURGER</h2>
+          <!-- Indicador clicável do tipo de consumo -->
+          <button
+            onclick="toggleConsumptionMode()"
+            title="Toque para alternar entre Comer Aqui e Para Viagem"
+            class="mt-1 inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold px-2.5 py-0.5 rounded-full bg-black/30 hover:bg-black/45 border transition cursor-pointer"
+            style="border-color: var(--dourado-base); color: var(--primary-container);"
+          >
+            <span id="badge-mode-icon">🍽️</span>
+            <span id="badge-mode-text">Comer Aqui</span>
+            <span class="opacity-75 text-[10px]">• trocar</span>
+          </button>
+        </div>
+      </div>
+
+      <button
+        onclick="requestResetOrder()"
+        class="px-3.5 sm:px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 border border-white/20 text-white font-semibold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer"
+      >
+        <span>✕</span>
+        <span>Cancelar / Início</span>
+      </button>
+    </header>
+
+    <!-- Layout Principal: Sidebar Esquerda + Grid Central -->
+    <div class="flex-1 flex flex-col md:flex-row pb-28">
+      <!-- Menu Lateral Esquerdo de 5 Categorias -->
+      <aside class="w-full md:w-52 lg:w-60 bg-surface border-b md:border-b-0 md:border-r border-theme md:sticky md:top-20 md:h-[calc(100vh-5rem-5.75rem)] overflow-x-auto md:overflow-y-auto shrink-0">
+        <div class="hidden md:block px-4 pt-5 pb-2">
+          <span class="text-[11px] font-bold uppercase tracking-widest text-muted">Categorias</span>
+        </div>
+        <nav id="category-nav" class="flex md:flex-col p-3 gap-2">
+          <!-- Renderizado via JS -->
+        </nav>
+      </aside>
+
+      <!-- Grade de Produtos -->
+      <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto w-full">
+        <div class="flex flex-wrap items-end justify-between gap-2 mb-6">
+          <div>
+            <h1 id="current-category-title" class="font-extrabold text-2xl sm:text-3xl text-dark leading-tight">Lanches</h1>
+            <p id="current-category-subtitle" class="text-xs sm:text-sm text-muted mt-0.5">Toque para personalizar ou adicionar ao seu pedido</p>
+          </div>
+          <span id="current-category-count" class="px-3.5 py-1 rounded-full badge-gold font-semibold text-xs">
+            0 opções
+          </span>
         </div>
 
-        <!-- HEADER -->
-        <header>
-            <div class="logo-area">
-                <div class="logo-badge">🛒</div>
-                <div class="logo-text">
-                    <span class="titulo">Smart Vending</span>
-                    <span class="subtitulo">Toque e Compre</span>
-                </div>
-            </div>
-            <div class="header-actions">
-                <button class="btn-header" onclick="abrirCarrinho()">
-                    🛒 Carrinho
-                </button>
-            </div>
-        </header>
-
-        <!-- ABAS DE CATEGORIAS -->
-        <div class="categorias-bar" id="categoriasBar">
-            <!-- Injetadas via JS -->
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <!-- Renderizado via JS -->
         </div>
-
-        <!-- ÁREA DE PRODUTOS -->
-        <div class="conteudo-produtos" id="conteudoProdutos">
-            <div class="categoria-titulo">
-                <div class="barra"></div>
-                <h2 id="tituloCategoria">Chocolates</h2>
-                <span class="contagem" id="contagemProdutos">10 produtos</span>
-            </div>
-            <div class="grid-produtos" id="gridProdutos">
-                <!-- Produtos injetados via JS -->
-            </div>
-        </div>
-
-        <!-- BARRA INFERIOR DO CARRINHO -->
-        <div class="carrinho-bar" id="carrinhoBar">
-            <div class="carrinho-info">
-                <div class="carrinho-icone-wrap">
-                    🛒
-                    <span class="carrinho-badge" id="carrinhoBadge">0</span>
-                </div>
-                <div class="carrinho-total-wrap">
-                    <span class="label">Total</span>
-                    <span class="valor" id="carrinhoTotalBar">R$ 0,00</span>
-                </div>
-            </div>
-            <button class="btn-finalizar" onclick="abrirCarrinho()">
-                Ver Carrinho →
-            </button>
-        </div>
-
-        <!-- MODAL DO CARRINHO -->
-        <div class="modal modal-carrinho" id="modalCarrinho">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>🛒 Seu Carrinho</h3>
-                    <button class="fechar-carrinho" onclick="fecharCarrinho()">✕ Fechar</button>
-                </div>
-                <div class="lista-carrinho" id="listaCarrinho">
-                    <!-- Itens injetados via JS -->
-                </div>
-                <div class="carrinho-footer" id="carrinhoFooter">
-                    <div class="carrinho-total-linha">
-                        <span class="label">Total do pedido</span>
-                        <span class="valor" id="carrinhoTotalModal">R$ 0,00</span>
-                    </div>
-                    <button class="btn-pagar-carrinho" onclick="abrirPagamentoCarrinho()">
-                        Pagar com Pix →
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- MODAL DE PAGAMENTO PIX -->
-        <div class="modal" id="modalPagamento">
-            <div class="modal-content">
-                <button class="fechar-modal" onclick="fecharModal()">❮ Voltar</button>
-                <div class="modal-titulo" id="modalTitulo">Pagamento via Pix</div>
-                <div class="modal-subtitulo" id="modalSubtitulo">Finalize seu pedido</div>
-
-                <div class="pix-timer" id="pixTimer">⏱️ Expira em 02:00</div>
-
-                <div class="qr-placeholder" aria-label="QR Code Pix">
-                    <svg viewBox="0 0 29 29" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
-                        <rect width="29" height="29" fill="#ffffff"/>
-                        <!-- Marcador superior esquerdo -->
-                        <path d="M1 1h7v7H1zM2 2v5h5V2zM3 3h3v3H3z" fill="#111827"/>
-                        <!-- Marcador superior direito -->
-                        <path d="M21 1h7v7h-7zM22 2v5h5V2zM23 3h3v3h-3z" fill="#111827"/>
-                        <!-- Marcador inferior esquerdo -->
-                        <path d="M1 21h7v7H1zM2 22v5h5v-5zM3 23h3v3H3z" fill="#111827"/>
-                        <!-- Módulos internos simulando QR Code Pix -->
-                        <path d="M10 1h2v1h-2zM14 1h1v2h-1zM17 1h2v2h-2zM10 3h1v2h-1zM12 3h2v1h-2zM16 4h3v1h-3zM10 6h2v2h-2zM14 6h2v1h-2zM18 6h1v2h-1z
-                                 M1 10h2v1H1zM4 10h3v1H4zM9 10h2v2H9zM13 9h2v3h-2zM17 10h3v1h-3zM22 10h2v2h-2zM26 10h2v1h-2z
-                                 M2 12h2v2H2zM6 12h2v1H6zM11 13h2v2h-2zM15 12h3v2h-3zM20 12h1v3h-1zM24 13h3v1h-3z
-                                 M1 15h3v1H1zM5 14h2v3H5zM8 15h2v2H8zM13 16h3v2h-3zM18 15h2v2h-2zM22 15h2v1h-2zM25 15h3v2h-3z
-                                 M2 18h2v2H2zM6 18h3v1H6zM11 18h2v2h-2zM16 19h2v2h-2zM20 18h3v2h-3zM25 18h2v2h-2z
-                                 M10 21h2v2h-2zM14 21h1v3h-1zM17 22h3v1h-3zM22 21h2v2h-2zM26 21h2v3h-2z
-                                 M10 25h3v2h-3zM15 25h2v3h-2zM19 24h2v2h-2zM23 25h2v2h-2zM27 26h1v2h-1z" fill="#111827"/>
-                        <!-- Centro com detalhe verde Pix -->
-                        <rect x="12" y="12" width="5" height="5" rx="1" fill="#ffffff"/>
-                        <path d="M14.5 12.8l1.7 1.7-1.7 1.7-1.7-1.7z" fill="#16a34a"/>
-                    </svg>
-                </div>
-
-                <div class="modal-total" id="modalTotalPix">R$ 0,00</div>
-
-                <p class="instrucao">Escaneie o QR Code com o aplicativo do seu banco para concluir o pagamento.</p>
-
-                <button class="btn-simular" onclick="simularPagamentoAprovado()">Simular Pagamento Aprovado</button>
-            </div>
-        </div>
-
-        <!-- TELA DE SUCESSO / LIBERAÇÃO EM FILA -->
-        <div class="tela-sucesso" id="telaSucesso">
-            <div class="icone-ok" id="sucessoIcone">✅</div>
-            <h2 id="sucessoTitulo">Pagamento Aprovado!</h2>
-            <p id="sucessoStatus">Preparando liberação...</p>
-            <div class="barra-progresso-wrap">
-                <div class="barra-progresso-fill" id="barraProgresso"></div>
-            </div>
-            <div class="destaque" id="sucessoDestaque">Aguarde a máquina girar as molas ⚙️</div>
-        </div>
+      </main>
     </div>
 
-    <script>
-        // ============================================
-        // DADOS: 6 categorias x 10 produtos = 60 produtos
-        // ============================================
-        const categorias = [
-            {
-                id: 'chocolates', nome: 'Chocolates', icone: '🍫',
-                produtos: [
-                    { id: '101', icone: '🍫', nome: 'Chocolate ao Leite', preco: 5.00, estoque: 12 },
-                    { id: '102', icone: '🍫', nome: 'Chocolate Amargo', preco: 5.50, estoque: 8 },
-                    { id: '103', icone: '🍫', nome: 'Chocolate Branco', preco: 5.50, estoque: 10 },
-                    { id: '104', icone: '🍬', nome: 'Bombom Recheado', preco: 2.50, estoque: 20 },
-                    { id: '105', icone: '🍫', nome: 'Barra com Avelã', preco: 6.00, estoque: 6 },
-                    { id: '106', icone: '🍫', nome: 'Chocolate Diet', preco: 6.50, estoque: 5 },
-                    { id: '107', icone: '🍪', nome: 'Cookies de Chocolate', preco: 4.00, estoque: 15 },
-                    { id: '108', icone: '🍫', nome: 'Trufa Artesanal', preco: 7.00, estoque: 4 },
-                    { id: '109', icone: '🍫', nome: 'Chocolate com Castanha', preco: 6.00, estoque: 9 },
-                    { id: '110', icone: '🍬', nome: 'Ovo de Páscoa Pequeno', preco: 12.00, estoque: 3 }
-                ]
-            },
-            {
-                id: 'bebidas', nome: 'Bebidas', icone: '🥤',
-                produtos: [
-                    { id: '201', icone: '🥤', nome: 'Refrigerante Cola', preco: 4.00, estoque: 20 },
-                    { id: '202', icone: '🥤', nome: 'Refrigerante Laranja', preco: 4.00, estoque: 15 },
-                    { id: '203', icone: '🥤', nome: 'Refrigerante Uva', preco: 4.00, estoque: 12 },
-                    { id: '204', icone: '💧', nome: 'Água Mineral', preco: 3.00, estoque: 30 },
-                    { id: '205', icone: '💧', nome: 'Água com Gás', preco: 3.50, estoque: 18 },
-                    { id: '206', icone: '🧃', nome: 'Suco de Laranja', preco: 5.00, estoque: 10 },
-                    { id: '207', icone: '🧃', nome: 'Suco de Uva', preco: 5.00, estoque: 8 },
-                    { id: '208', icone: '☕', nome: 'Café Gelado', preco: 6.00, estoque: 7 },
-                    { id: '209', icone: '🥛', nome: 'Leite Achocolatado', preco: 4.50, estoque: 14 },
-                    { id: '210', icone: '⚡', nome: 'Energético', preco: 8.00, estoque: 6 }
-                ]
-            },
-            {
-                id: 'salgadinhos', nome: 'Salgadinhos', icone: '🥔',
-                produtos: [
-                    { id: '301', icone: '🥔', nome: 'Batata Frita Original', preco: 4.50, estoque: 16 },
-                    { id: '302', icone: '🥔', nome: 'Batata Frita Ondulada', preco: 4.50, estoque: 12 },
-                    { id: '303', icone: '🧀', nome: 'Salgadinho de Queijo', preco: 4.00, estoque: 20 },
-                    { id: '304', icone: '🌶️', nome: 'Salgadinho Picante', preco: 4.00, estoque: 10 },
-                    { id: '305', icone: '🥨', nome: 'Pretzel Salgado', preco: 3.50, estoque: 9 },
-                    { id: '306', icone: '🍿', nome: 'Pipoca Microondas', preco: 5.00, estoque: 8 },
-                    { id: '307', icone: '🥜', nome: 'Amendoim Torrado', preco: 3.00, estoque: 22 },
-                    { id: '308', icone: '🥜', nome: 'Castanha de Caju', preco: 7.50, estoque: 5 },
-                    { id: '309', icone: '🌽', nome: 'Salgadinho de Milho', preco: 3.50, estoque: 14 },
-                    { id: '310', icone: '🧂', nome: 'Batata Palha', preco: 4.00, estoque: 11 }
-                ]
-            },
-            {
-                id: 'doces', nome: 'Doces', icone: '🍬',
-                produtos: [
-                    { id: '401', icone: '🍬', nome: 'Bala de Hortelã', preco: 1.50, estoque: 40 },
-                    { id: '402', icone: '🍬', nome: 'Bala de Frutas', preco: 1.50, estoque: 35 },
-                    { id: '403', icone: '🍭', nome: 'Pirulito Colorido', preco: 2.00, estoque: 25 },
-                    { id: '404', icone: '🍬', nome: 'Jujuba', preco: 2.00, estoque: 30 },
-                    { id: '405', icone: '🍬', nome: 'Marshmallow', preco: 2.50, estoque: 18 },
-                    { id: '406', icone: '🍪', nome: 'Biscoito Recheado', preco: 3.00, estoque: 20 },
-                    { id: '407', icone: '🍩', nome: 'Rosquinha Doce', preco: 2.50, estoque: 15 },
-                    { id: '408', icone: '🍬', nome: 'Paçoca', preco: 2.00, estoque: 22 },
-                    { id: '409', icone: '🍫', nome: 'Brigadeiro', preco: 2.50, estoque: 12 },
-                    { id: '410', icone: '🍬', nome: 'Doce de Leite', preco: 3.00, estoque: 10 }
-                ]
-            },
-            {
-                id: 'biscoitos', nome: 'Biscoitos', icone: '🍪',
-                produtos: [
-                    { id: '501', icone: '🍪', nome: 'Biscoito Cream Cracker', preco: 3.00, estoque: 18 },
-                    { id: '502', icone: '🍪', nome: 'Biscoito Maria', preco: 2.50, estoque: 20 },
-                    { id: '503', icone: '🍪', nome: 'Biscoito de Polvilho', preco: 3.50, estoque: 14 },
-                    { id: '504', icone: '🍪', nome: 'Biscoito de Aveia', preco: 4.00, estoque: 10 },
-                    { id: '505', icone: '🍪', nome: 'Biscoito Integral', preco: 4.50, estoque: 8 },
-                    { id: '506', icone: '🍪', nome: 'Biscoito com Gotas', preco: 4.00, estoque: 12 },
-                    { id: '507', icone: '🥨', nome: 'Biscoito Salgado', preco: 3.00, estoque: 16 },
-                    { id: '508', icone: '🍪', nome: 'Cookie de Baunilha', preco: 4.50, estoque: 9 },
-                    { id: '509', icone: '🍪', nome: 'Biscoito de Coco', preco: 3.50, estoque: 11 },
-                    { id: '510', icone: '🍪', nome: 'Wafer de Chocolate', preco: 3.00, estoque: 15 }
-                ]
-            },
-            {
-                id: 'saudaveis', nome: 'Saudáveis', icone: '🥗',
-                produtos: [
-                    { id: '601', icone: '🥜', nome: 'Mix de Castanhas', preco: 8.00, estoque: 7 },
-                    { id: '602', icone: '🍎', nome: 'Barra de Frutas', preco: 4.50, estoque: 10 },
-                    { id: '603', icone: '🌾', nome: 'Barra de Cereal', preco: 3.50, estoque: 14 },
-                    { id: '604', icone: '🥜', nome: 'Amêndoas', preco: 9.00, estoque: 5 },
-                    { id: '605', icone: '🍇', nome: 'Uva Passa', preco: 4.00, estoque: 12 },
-                    { id: '606', icone: '🌰', nome: 'Avelãs', preco: 10.00, estoque: 4 },
-                    { id: '607', icone: '🍫', nome: 'Chocolate 70% Cacau', preco: 8.50, estoque: 6 },
-                    { id: '608', icone: '🥤', nome: 'Iogurte Natural', preco: 5.50, estoque: 9 },
-                    { id: '609', icone: '🍪', nome: 'Biscoito Sem Glúten', preco: 6.00, estoque: 7 },
-                    { id: '610', icone: '🥤', nome: 'Kombucha', preco: 9.50, estoque: 3 }
-                ]
-            }
-        ];
+    <!-- Barra Inferior Fixa do Carrinho -->
+    <footer class="fixed bottom-0 inset-x-0 z-30 bg-surface border-t-2 border-theme shadow-theme-md px-4 sm:px-8 py-3.5">
+      <div class="max-w-7xl mx-auto flex flex-wrap sm:flex-nowrap items-center justify-between gap-3">
+        <!-- Quantidade e Subtotal -->
+        <div class="flex items-center gap-3.5">
+          <div class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-primary-container border border-gold flex items-center justify-center text-2xl">
+            🛒
+            <span
+              id="cart-count-badge"
+              class="absolute -top-2 -right-2 min-w-[26px] h-[26px] px-1.5 rounded-full bg-crimson-radial text-white font-bold text-xs flex items-center justify-center border border-[#ccae62] shadow-sm"
+            >
+              0
+            </span>
+          </div>
+          <div>
+            <span class="block text-[11px] font-semibold uppercase tracking-wider text-muted">Subtotal do Pedido</span>
+            <span id="cart-total-display" class="font-extrabold text-2xl sm:text-3xl text-dark">R$ 0,00</span>
+          </div>
+        </div>
 
-        // ============================================
-        // ESTADO
-        // ============================================
-        let categoriaAtualId = categorias[0].id;
-        let carrinho = []; // [{ id, nome, preco, icone, qtd, estoqueMax }]
-        let timerPix = null;
-        let segundosPix = 120;
-        let timerInatividade = null;
-        let liberandoProdutos = false;
-        const TEMPO_DESCANSO_MS = 45000; // 45 segundos sem toque volta para tela de descanso
+        <!-- Botões Limpar + Ver Pedido / Finalizar -->
+        <div class="flex items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
+          <button
+            id="btn-clear-cart"
+            onclick="requestClearCart()"
+            disabled
+            class="flex-1 sm:flex-none px-4 sm:px-6 py-3.5 sm:py-4 rounded-2xl btn-danger-soft disabled:opacity-40 disabled:cursor-not-allowed font-bold text-sm sm:text-base cursor-pointer"
+          >
+            Limpar
+          </button>
 
-        // Elementos
-        const telaDescanso = document.getElementById('telaDescanso');
-        const categoriasBar = document.getElementById('categoriasBar');
-        const gridProdutos = document.getElementById('gridProdutos');
-        const tituloCategoria = document.getElementById('tituloCategoria');
-        const contagemProdutos = document.getElementById('contagemProdutos');
-        const carrinhoBar = document.getElementById('carrinhoBar');
-        const carrinhoBadge = document.getElementById('carrinhoBadge');
-        const carrinhoTotalBar = document.getElementById('carrinhoTotalBar');
-        const carrinhoTotalModal = document.getElementById('carrinhoTotalModal');
-        const listaCarrinho = document.getElementById('listaCarrinho');
-        const carrinhoFooter = document.getElementById('carrinhoFooter');
-        const modalCarrinho = document.getElementById('modalCarrinho');
-        const modalPagamento = document.getElementById('modalPagamento');
-        const pixTimerEl = document.getElementById('pixTimer');
-        const telaSucesso = document.getElementById('telaSucesso');
-        const sucessoIcone = document.getElementById('sucessoIcone');
-        const sucessoTitulo = document.getElementById('sucessoTitulo');
-        const sucessoStatus = document.getElementById('sucessoStatus');
-        const barraProgresso = document.getElementById('barraProgresso');
-        const sucessoDestaque = document.getElementById('sucessoDestaque');
+          <button
+            id="btn-open-cart"
+            onclick="openCartModal()"
+            disabled
+            class="flex-[2] sm:flex-none px-6 sm:px-10 py-3.5 sm:py-4 rounded-2xl btn-gold font-bold text-sm sm:text-base flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>Ver Pedido / Finalizar</span>
+            <span>→</span>
+          </button>
+        </div>
+      </div>
+    </footer>
+  </section>
 
-        // ============================================
-        // TELA DE DESCANSO E INATIVIDADE
-        // ============================================
-        function sairDescanso() {
-            telaDescanso.classList.remove('visivel');
-            reiniciarTimerInatividade();
-        }
 
-        function ativarDescanso() {
-            if (liberandoProdutos) return;
-            pararTimerPix();
-            fecharCarrinho();
-            fecharModal();
-            carrinho = [];
-            atualizarCarrinho();
-            renderizarProdutos();
-            telaDescanso.classList.add('visivel');
-        }
+  <!-- =====================================================================
+       5. TELA DE PAGAMENTO (PIX QR CODE + CARTÃO)
+  ====================================================================== -->
+  <section id="screen-payment" class="hidden min-h-screen flex flex-col bg-app">
+    <header class="bg-crimson-radial text-white px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between shadow-theme-md border-b-2" style="border-color: var(--dourado-base);">
+      <button
+        onclick="backToMenuFromPayment()"
+        class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 border border-white/20 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
+      >
+        ← Voltar ao Cardápio
+      </button>
+      <span class="font-extrabold text-lg sm:text-xl tracking-wide">Pagamento</span>
+      <span id="payment-mode-badge" class="text-xs font-semibold px-3 py-1 rounded-full bg-black/30 border" style="border-color: var(--dourado-base); color: var(--primary-container);">
+        🍽️ Comer Aqui
+      </span>
+    </header>
 
-        function reiniciarTimerInatividade() {
-            clearTimeout(timerInatividade);
-            if (!telaDescanso.classList.contains('visivel') && !liberandoProdutos) {
-                timerInatividade = setTimeout(ativarDescanso, TEMPO_DESCANSO_MS);
-            }
-        }
+    <main class="flex-1 max-w-3xl mx-auto w-full p-4 sm:p-8 flex flex-col justify-center">
+      <!-- Cartão Resumo do Valor -->
+      <div class="bg-surface rounded-3xl p-6 shadow-theme-sm border border-theme text-center mb-6">
+        <span class="text-xs font-bold uppercase tracking-widest text-muted">Total a Pagar</span>
+        <div id="payment-total-amount" class="font-extrabold text-4xl sm:text-5xl text-dark mt-1">R$ 0,00</div>
+        <p id="payment-items-summary" class="text-xs sm:text-sm text-muted mt-1">0 itens no pedido</p>
+      </div>
 
-        ['click', 'touchstart', 'mousemove'].forEach(evt => {
-            document.addEventListener(evt, reiniciarTimerInatividade, { passive: true });
+      <!-- Escolha do Método -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <button
+          id="pay-tab-pix"
+          onclick="selectPaymentMethod('pix')"
+          class="p-5 rounded-3xl border-2 text-left transition active:scale-95 flex items-center gap-4 cursor-pointer"
+        >
+          <div class="w-14 h-14 rounded-2xl badge-success flex items-center justify-center text-2xl font-extrabold shrink-0">
+            ❖
+          </div>
+          <div>
+            <span class="block font-bold text-base sm:text-lg text-dark">Pix (QR Code na tela)</span>
+            <span class="text-xs text-muted">Aprovação imediata</span>
+          </div>
+        </button>
+
+        <button
+          id="pay-tab-card"
+          onclick="selectPaymentMethod('card')"
+          class="p-5 rounded-3xl border-2 text-left transition active:scale-95 flex items-center gap-4 cursor-pointer"
+        >
+          <div class="w-14 h-14 rounded-2xl bg-primary-container text-on-primary flex items-center justify-center text-2xl shrink-0">
+            💳
+          </div>
+          <div>
+            <span class="block font-bold text-base sm:text-lg text-dark">Cartão (Crédito / Débito)</span>
+            <span class="text-xs text-muted">Aproximação ou chip na maquininha</span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Painel PIX -->
+      <div id="payment-panel-pix" class="bg-surface rounded-3xl p-6 sm:p-8 shadow-theme-sm border border-theme text-center animate-modal">
+        <div class="inline-flex items-center gap-2 badge-warning font-semibold text-xs sm:text-sm px-4 py-1.5 rounded-full mb-4">
+          <span>⏱️</span>
+          <span>Expira em <strong id="pix-timer" class="font-extrabold">05:00</strong></span>
+        </div>
+
+        <h3 class="font-bold text-xl text-dark mb-1">Escaneie o QR Code com o app do seu banco</h3>
+        <p class="text-xs sm:text-sm text-muted mb-6">Assim que o pagamento for confirmado, sua senha será exibida automaticamente.</p>
+
+        <!-- QR Code SVG nítido gerado na tela -->
+        <div class="inline-block p-4 bg-white rounded-3xl border-2 shadow-theme-md mb-6" style="border-color: var(--dourado-base);">
+          <svg viewBox="0 0 210 210" class="w-48 h-48 sm:w-56 sm:h-56" xmlns="http://www.w3.org/2000/svg" aria-label="QR Code Pix">
+            <rect width="210" height="210" fill="#ffffff" />
+            <!-- Finder Top-Left -->
+            <rect x="10" y="10" width="60" height="60" rx="6" fill="#1f1f1f" />
+            <rect x="20" y="20" width="40" height="40" rx="3" fill="#ffffff" />
+            <rect x="30" y="30" width="20" height="20" rx="2" fill="#6b0008" />
+            <!-- Finder Top-Right -->
+            <rect x="140" y="10" width="60" height="60" rx="6" fill="#1f1f1f" />
+            <rect x="150" y="20" width="40" height="40" rx="3" fill="#ffffff" />
+            <rect x="160" y="30" width="20" height="20" rx="2" fill="#6b0008" />
+            <!-- Finder Bottom-Left -->
+            <rect x="10" y="140" width="60" height="60" rx="6" fill="#1f1f1f" />
+            <rect x="20" y="150" width="40" height="40" rx="3" fill="#ffffff" />
+            <rect x="30" y="160" width="20" height="20" rx="2" fill="#6b0008" />
+            <!-- Data Modules -->
+            <g fill="#1f1f1f">
+              <rect x="80" y="10" width="10" height="10" /><rect x="100" y="10" width="10" height="10" /><rect x="120" y="10" width="10" height="10" />
+              <rect x="90" y="20" width="10" height="10" /><rect x="110" y="20" width="10" height="10" />
+              <rect x="80" y="30" width="20" height="10" /><rect x="120" y="30" width="10" height="10" />
+              <rect x="90" y="40" width="10" height="10" /><rect x="110" y="40" width="20" height="10" />
+              <rect x="80" y="50" width="10" height="10" /><rect x="100" y="50" width="10" height="10" />
+              <rect x="80" y="60" width="10" height="10" /><rect x="100" y="60" width="10" height="10" /><rect x="120" y="60" width="10" height="10" />
+
+              <rect x="10" y="80" width="20" height="10" /><rect x="40" y="80" width="10" height="10" /><rect x="60" y="80" width="10" height="10" />
+              <rect x="20" y="90" width="10" height="10" /><rect x="50" y="90" width="20" height="10" />
+              <rect x="10" y="100" width="10" height="10" /><rect x="30" y="100" width="20" height="10" /><rect x="60" y="100" width="10" height="10" />
+              <rect x="20" y="110" width="20" height="10" /><rect x="50" y="110" width="10" height="10" />
+              <rect x="10" y="120" width="10" height="10" /><rect x="40" y="120" width="20" height="10" />
+
+              <rect x="140" y="80" width="10" height="10" /><rect x="160" y="80" width="20" height="10" /><rect x="190" y="80" width="10" height="10" />
+              <rect x="150" y="90" width="20" height="10" /><rect x="180" y="90" width="20" height="10" />
+              <rect x="140" y="100" width="10" height="10" /><rect x="170" y="100" width="10" height="10" /><rect x="190" y="100" width="10" height="10" />
+              <rect x="140" y="110" width="20" height="10" /><rect x="180" y="110" width="10" height="10" />
+              <rect x="150" y="120" width="10" height="10" /><rect x="170" y="120" width="30" height="10" />
+
+              <rect x="80" y="140" width="10" height="20" /><rect x="100" y="140" width="20" height="10" /><rect x="130" y="140" width="10" height="10" />
+              <rect x="150" y="140" width="20" height="10" /><rect x="180" y="140" width="20" height="10" />
+              <rect x="90" y="150" width="10" height="10" /><rect x="120" y="150" width="20" height="10" /><rect x="160" y="150" width="10" height="20" />
+              <rect x="80" y="170" width="20" height="10" /><rect x="110" y="170" width="10" height="10" /><rect x="130" y="170" width="20" height="10" /><rect x="180" y="170" width="20" height="10" />
+              <rect x="90" y="180" width="10" height="20" /><rect x="120" y="180" width="10" height="10" /><rect x="150" y="180" width="20" height="10" /><rect x="190" y="180" width="10" height="20" />
+              <rect x="80" y="190" width="10" height="10" /><rect x="110" y="190" width="30" height="10" /><rect x="170" y="190" width="10" height="10" />
+            </g>
+            <!-- Selo Central Pix -->
+            <rect x="83" y="83" width="44" height="44" rx="10" fill="#188038" />
+            <text x="105" y="112" text-anchor="middle" fill="#ffffff" font-family="Poppins, sans-serif" font-size="22" font-weight="800">❖</text>
+          </svg>
+        </div>
+
+        <div class="max-w-md mx-auto">
+          <button
+            onclick="completePayment('Pix')"
+            class="w-full py-4 sm:py-5 rounded-2xl btn-gold font-bold text-base sm:text-lg flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>✓</span>
+            <span>Simular Pagamento Aprovado</span>
+          </button>
+          <p class="text-xs text-muted mt-3">
+            Modo demonstração: clique acima para simular o retorno aprovado do webhook Pix.
+          </p>
+        </div>
+      </div>
+
+      <!-- Painel CARTÃO -->
+      <div id="payment-panel-card" class="hidden bg-surface rounded-3xl p-6 sm:p-8 shadow-theme-sm border border-theme text-center animate-modal">
+        <div class="w-24 h-24 rounded-3xl bg-primary-container border-2 border-gold text-5xl flex items-center justify-center mx-auto mb-5 animate-float">
+          💳
+        </div>
+        <h3 class="font-bold text-2xl text-dark mb-2">Aproxime ou insira seu cartão</h3>
+        <p class="text-muted text-sm sm:text-base max-w-md mx-auto mb-8">
+          Aguardando leitura na maquininha abaixo do totem. Aceitamos Crédito, Débito e carteiras digitais por aproximação.
+        </p>
+
+        <div class="max-w-md mx-auto">
+          <button
+            onclick="completePayment('Cartão')"
+            class="w-full py-4 sm:py-5 rounded-2xl btn-gold font-bold text-base sm:text-lg flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>✓</span>
+            <span>Simular Pagamento Aprovado</span>
+          </button>
+        </div>
+      </div>
+    </main>
+  </section>
+
+
+  <!-- =====================================================================
+       6. TELA DE SENHA + ROTEAMENTO SILENCIOSO DE IMPRESSORAS
+  ====================================================================== -->
+  <section id="screen-success" class="hidden min-h-screen flex flex-col justify-center bg-app p-4 sm:p-8">
+    <main class="max-w-4xl mx-auto w-full space-y-6 animate-modal">
+      <!-- Card da Senha Final em var(--fundo-logo-vermelho) e var(--gradiente-dourado) -->
+      <div class="bg-crimson-radial text-white rounded-3xl p-6 sm:p-10 shadow-theme-md border-2 text-center relative overflow-hidden" style="border-color: var(--dourado-base);">
+        <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full opacity-15 blur-3xl pointer-events-none" style="background: var(--dourado-base);"></div>
+
+        <div class="relative z-10">
+          <div class="inline-flex items-center gap-2 badge-success px-4 py-1.5 rounded-full font-bold text-xs sm:text-sm mb-4">
+            <span>✓</span>
+            <span>Pagamento Aprovado • <span id="success-payment-method">Pix</span></span>
+          </div>
+
+          <h1 class="font-bold text-xl sm:text-2xl text-white/90">
+            Pedido confirmado! Sua senha é:
+          </h1>
+
+          <!-- Senha em Destaque -->
+          <div class="my-6 inline-block rounded-3xl p-[3px] bg-gold-gradient shadow-2xl">
+            <div class="bg-black/40 backdrop-blur-sm rounded-[21px] px-10 sm:px-14 py-5">
+              <span id="order-password-display" class="font-extrabold text-6xl sm:text-8xl tracking-tight" style="color: var(--dourado-base);">
+                #042
+              </span>
+            </div>
+          </div>
+
+          <p class="text-white/85 text-sm sm:text-base max-w-md mx-auto">
+            Acompanhe o chamado no painel do balcão (<strong id="success-mode-text" class="text-white">Comer Aqui</strong>). Obrigado pela preferência!
+          </p>
+
+          <!-- Botões Novo Pedido + Contagem Regressiva -->
+          <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              onclick="resetToWelcome()"
+              class="w-full sm:w-auto px-8 py-4 rounded-2xl btn-gold font-bold text-base sm:text-lg cursor-pointer"
+            >
+              Novo Pedido
+            </button>
+            <button
+              id="btn-pause-countdown"
+              onclick="toggleSuccessCountdown()"
+              class="w-full sm:w-auto px-5 py-4 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs sm:text-sm transition cursor-pointer"
+            >
+              Retornando ao início em <span id="success-countdown">20</span>s (Pausar)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Painel Técnico: Roteamento Silencioso via HTTP (POST /api/imprimir) -->
+      <div class="bg-surface rounded-3xl p-5 sm:p-6 shadow-theme-sm border border-theme">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-4 border-b border-theme">
+          <div>
+            <h3 class="font-bold text-sm sm:text-base text-dark flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full animate-pulse" style="background-color: var(--success);"></span>
+              Roteamento Silencioso de Impressoras de Rede
+            </h3>
+            <p class="text-xs text-muted mt-0.5">Divisão automática dos itens do pedido por setor via backend Flask (ESC/POS • Porta 9100)</p>
+          </div>
+          <span class="text-[11px] font-mono font-semibold badge-gold px-3 py-1 rounded-lg">
+            POST /api/imprimir
+          </span>
+        </div>
+
+        <div id="printer-routing-logs" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Renderizado dinamicamente via JS -->
+        </div>
+      </div>
+    </main>
+  </section>
+
+
+  <!-- =====================================================================
+       3. MODAL DE PERSONALIZAÇÃO (LANCHES E COMBOS)
+  ====================================================================== -->
+  <div id="modal-product" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-surface w-full sm:max-w-2xl max-h-[92vh] rounded-t-3xl sm:rounded-3xl shadow-2xl border border-theme flex flex-col overflow-hidden animate-modal">
+      <!-- Cabeçalho do Modal -->
+      <div class="bg-crimson-radial text-white p-5 sm:p-6 flex items-center justify-between gap-4 shrink-0 border-b-2" style="border-color: var(--dourado-base);">
+        <div class="flex items-center gap-4 min-w-0">
+          <div id="modal-prod-art" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-surface-alt border-2 border-gold p-2 flex items-center justify-center shrink-0">
+            <!-- SVG injetado via JS -->
+          </div>
+          <div class="min-w-0">
+            <span id="modal-prod-category" class="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-black/30 border mb-1" style="border-color: var(--dourado-base); color: var(--primary-container);">
+              Lanches
+            </span>
+            <h2 id="modal-prod-name" class="font-extrabold text-xl sm:text-2xl leading-tight truncate">Nome do Produto</h2>
+            <p id="modal-prod-desc" class="text-xs text-white/80 line-clamp-2 mt-0.5"></p>
+          </div>
+        </div>
+
+        <button
+          onclick="closeProductModal()"
+          class="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 text-white font-bold text-lg flex items-center justify-center shrink-0 active:scale-95 cursor-pointer"
+          aria-label="Fechar"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Corpo Rolável de Opções -->
+      <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
+        <!-- Toggle Transformar em Combo (para Lanches) -->
+        <div id="section-combo-toggle" class="hidden">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-base text-dark">Deseja transformar em Combo?</h3>
+            <span class="badge-gold text-[11px] font-bold px-2.5 py-0.5 rounded-full">+ R$ 14,90</span>
+          </div>
+
+          <button
+            id="btn-toggle-combo"
+            onclick="toggleComboUpgrade()"
+            class="w-full p-4 rounded-2xl border-2 text-left transition active:scale-[0.99] flex items-center justify-between gap-4 cursor-pointer"
+          >
+            <div class="flex items-center gap-3.5">
+              <div class="w-12 h-12 rounded-xl bg-primary-container border border-gold flex items-center justify-center text-2xl shrink-0">
+                🍟
+              </div>
+              <div>
+                <div class="font-bold text-sm sm:text-base text-dark">Transformar em Combo</div>
+                <div class="text-xs text-muted">Acompanha Batata Média + Bebida Média (+ R$ 14,90)</div>
+              </div>
+            </div>
+            <!-- Switch visual -->
+            <div id="combo-switch-track" class="w-14 h-8 rounded-full p-1 transition-colors shrink-0 flex items-center">
+              <div id="combo-switch-thumb" class="w-6 h-6 rounded-full bg-white shadow transition-transform"></div>
+            </div>
+          </button>
+        </div>
+
+        <!-- Seleção de Bebida do Combo (aparece quando é Combo ou quando Toggle está ativo) -->
+        <div id="section-combo-drink" class="hidden p-4 rounded-2xl bg-surface-alt border border-theme">
+          <div class="flex items-center justify-between mb-2.5">
+            <label class="font-bold text-sm text-dark">Escolha a Bebida Média do Combo:</label>
+            <span class="badge-warning text-[11px] font-semibold px-2.5 py-0.5 rounded-full">Obrigatório</span>
+          </div>
+          <div id="combo-drink-options" class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+
+        <!-- Adicionais Pagos -->
+        <div id="section-extras">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-base text-dark">Adicionais</h3>
+            <span class="text-xs font-medium text-muted">Opcional</span>
+          </div>
+          <div id="extras-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+
+        <!-- Retirar Ingredientes (Grátis) -->
+        <div id="section-removals">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-base text-dark">Retirar Ingredientes</h3>
+            <span class="badge-success text-[11px] font-bold px-2.5 py-0.5 rounded-full">Grátis</span>
+          </div>
+          <div id="removals-list" class="flex flex-wrap gap-2.5">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Rodapé: Quantidade + Adicionar ao Pedido -->
+      <div class="p-4 sm:p-5 bg-surface-alt border-t border-theme flex items-center justify-between gap-3 sm:gap-4 shrink-0">
+        <div class="flex items-center bg-surface rounded-2xl border border-theme p-1 shadow-theme-sm">
+          <button
+            onclick="changeModalQty(-1)"
+            class="w-11 h-11 rounded-xl bg-surface-alt hover:bg-primary-container font-bold text-xl text-dark flex items-center justify-center active:scale-90 cursor-pointer"
+          >
+            −
+          </button>
+          <span id="modal-qty-value" class="w-10 text-center font-extrabold text-lg text-dark">1</span>
+          <button
+            onclick="changeModalQty(1)"
+            class="w-11 h-11 rounded-xl bg-primary-container border border-gold font-bold text-xl text-on-primary flex items-center justify-center active:scale-90 cursor-pointer"
+          >
+            +
+          </button>
+        </div>
+
+        <button
+          onclick="confirmAddToCart()"
+          class="flex-1 py-4 px-5 rounded-2xl btn-gold font-bold text-sm sm:text-base flex items-center justify-between cursor-pointer"
+        >
+          <span>Adicionar ao Pedido</span>
+          <span id="modal-total-btn" class="bg-black/20 px-3 py-1 rounded-xl font-extrabold">R$ 0,00</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =====================================================================
+       4. MODAL DE REVISÃO DO PEDIDO + UPSELL
+  ====================================================================== -->
+  <div id="modal-cart" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-surface w-full sm:max-w-2xl max-h-[92vh] rounded-t-3xl sm:rounded-3xl shadow-2xl border border-theme flex flex-col overflow-hidden animate-modal">
+      <!-- Cabeçalho -->
+      <div class="bg-crimson-radial text-white px-6 py-5 flex items-center justify-between shrink-0 border-b-2" style="border-color: var(--dourado-base);">
+        <div>
+          <h2 class="font-extrabold text-xl sm:text-2xl">Revise seu Pedido</h2>
+          <p class="text-xs text-white/80">Confira itens, personalizações e quantidades antes do pagamento</p>
+        </div>
+        <button
+          onclick="closeCartModal()"
+          class="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 text-white font-bold text-lg flex items-center justify-center active:scale-95 cursor-pointer"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Itens do Carrinho + Faixa de Upsell -->
+      <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
+        <div id="cart-items-container" class="space-y-3">
+          <!-- Renderizado via JS -->
+        </div>
+
+        <!-- Faixa de Upsell em var(--surface-alt) -->
+        <div class="bg-surface-alt border border-theme rounded-3xl p-4 sm:p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-base text-dark">✨ Aproveite e leve também</h3>
+            <span class="badge-gold text-[11px] font-semibold px-2.5 py-0.5 rounded-full">1 clique</span>
+          </div>
+          <div id="upsell-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Rodapé -->
+      <div class="p-5 sm:p-6 bg-surface-alt border-t border-theme shrink-0">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="text-[11px] uppercase font-bold tracking-wider text-muted block">Total do Pedido</span>
+            <span id="cart-modal-mode" class="text-xs font-semibold text-primary-dark">🍽️ Comer Aqui</span>
+          </div>
+          <span id="cart-modal-total" class="font-extrabold text-3xl text-dark">R$ 0,00</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <button
+            onclick="closeCartModal()"
+            class="py-4 rounded-2xl bg-surface border border-theme hover:bg-primary-container text-dark font-bold text-sm sm:text-base transition active:scale-95 cursor-pointer"
+          >
+            + Adicionar Itens
+          </button>
+          <button
+            onclick="goToPayment()"
+            class="sm:col-span-2 py-4 rounded-2xl btn-gold font-bold text-base sm:text-lg flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>Ir para Pagamento</span>
+            <span>→</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =====================================================================
+       MODAL DE CONFIRMAÇÃO CUSTOMIZADO (NUNCA USA confirm())
+  ====================================================================== -->
+  <div id="modal-confirm" class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-surface rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl border border-theme animate-modal">
+      <div class="w-16 h-16 rounded-2xl badge-danger text-3xl flex items-center justify-center mx-auto mb-4">
+        ⚠️
+      </div>
+      <h3 id="confirm-title" class="font-extrabold text-xl text-dark mb-2">Confirmar ação</h3>
+      <p id="confirm-desc" class="text-sm text-muted mb-6">Deseja realmente continuar?</p>
+      <div class="grid grid-cols-2 gap-3">
+        <button
+          onclick="closeConfirmModal()"
+          class="py-3.5 rounded-2xl bg-surface-alt border border-theme text-dark font-bold text-sm transition active:scale-95 cursor-pointer"
+        >
+          Voltar
+        </button>
+        <button
+          id="btn-confirm-ok"
+          onclick="executeConfirmAction()"
+          class="py-3.5 rounded-2xl font-bold text-sm text-white transition active:scale-95 cursor-pointer"
+          style="background-color: var(--danger-text);"
+        >
+          Sim, confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =====================================================================
+       TOAST DE FEEDBACK (NUNCA USA alert())
+  ====================================================================== -->
+  <div
+    id="toast"
+    class="fixed top-6 left-1/2 -translate-x-1/2 z-[70] pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-4"
+  >
+    <div class="bg-crimson-radial text-white px-5 py-3 rounded-2xl shadow-theme-md border font-semibold text-sm flex items-center gap-2.5" style="border-color: var(--dourado-base);">
+      <span id="toast-icon">✓</span>
+      <span id="toast-message">Item adicionado!</span>
+    </div>
+  </div>
+
+
+  <!-- =====================================================================
+       JAVASCRIPT PURO: CARDÁPIO, ILUSTRAÇÕES SVG, CARRINHO E IMPRESSÃO
+  ====================================================================== -->
+  <script>
+    /* -------------------------------------------------------------------
+       1. ILUSTRAÇÕES SVG PRÓPRIAS (ZERO DEPENDÊNCIA DE IMAGENS EXTERNAS)
+    -------------------------------------------------------------------- */
+    function getProductSVG(artKey) {
+      const svgs = {
+        burger_double: `
+          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="84" rx="44" ry="7" fill="#e2dcd0"/>
+            <path d="M22 42 C22 18, 98 18, 98 42 Z" fill="#d99b43" stroke="#8c6d3f" stroke-width="2"/>
+            <circle cx="44" cy="30" r="2.2" fill="#fef7e0"/><circle cx="60" cy="26" r="2.2" fill="#fef7e0"/><circle cx="76" cy="31" r="2.2" fill="#fef7e0"/>
+            <path d="M18 46 H102 L94 54 L80 49 L66 56 L52 49 L36 55 Z" fill="#f5b82e"/>
+            <rect x="20" y="51" width="80" height="10" rx="5" fill="#5e2318"/>
+            <path d="M19 61 H101 L91 67 L72 62 L58 68 L38 62 Z" fill="#f5b82e"/>
+            <rect x="20" y="65" width="80" height="10" rx="5" fill="#4a1911"/>
+            <path d="M24 75 H96 C96 82, 90 85, 82 85 H38 C30 85, 24 82, 24 75 Z" fill="#d99b43" stroke="#8c6d3f" stroke-width="2"/>
+          </svg>`,
+
+        burger_classic: `
+          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="84" rx="44" ry="7" fill="#e2dcd0"/>
+            <path d="M22 44 C22 20, 98 20, 98 44 Z" fill="#d99b43" stroke="#8c6d3f" stroke-width="2"/>
+            <circle cx="46" cy="32" r="2" fill="#fef7e0"/><circle cx="62" cy="28" r="2" fill="#fef7e0"/><circle cx="75" cy="33" r="2" fill="#fef7e0"/>
+            <path d="M18 48 Q28 42 38 48 T58 48 T78 48 T102 48" fill="none" stroke="#188038" stroke-width="6" stroke-linecap="round"/>
+            <rect x="24" y="52" width="72" height="6" rx="3" fill="#c5221f"/>
+            <path d="M20 58 H100 L88 65 L60 60 L34 65 Z" fill="#f5b82e"/>
+            <rect x="20" y="61" width="80" height="12" rx="6" fill="#5e2318"/>
+            <path d="M24 73 H96 C96 80, 90 84, 82 84 H38 C30 84, 24 80, 24 73 Z" fill="#d99b43" stroke="#8c6d3f" stroke-width="2"/>
+          </svg>`,
+
+        burger_chicken: `
+          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="84" rx="44" ry="7" fill="#e2dcd0"/>
+            <path d="M22 44 C22 22, 98 22, 98 44 Z" fill="#e0a952" stroke="#8c6d3f" stroke-width="2"/>
+            <path d="M18 49 Q30 43 42 49 T66 49 T90 49 T102 49" fill="none" stroke="#2e9e4f" stroke-width="6" stroke-linecap="round"/>
+            <rect x="18" y="54" width="84" height="16" rx="8" fill="#cc7a29" stroke="#8c4e12" stroke-width="2"/>
+            <circle cx="34" cy="62" r="2" fill="#f5ecd4" opacity="0.7"/><circle cx="58" cy="60" r="2.2" fill="#f5ecd4" opacity="0.7"/><circle cx="82" cy="63" r="2" fill="#f5ecd4" opacity="0.7"/>
+            <path d="M24 72 H96 C96 80, 90 84, 82 84 H38 C30 84, 24 80, 24 72 Z" fill="#e0a952" stroke="#8c6d3f" stroke-width="2"/>
+          </svg>`,
+
+        combo_box: `
+          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="85" rx="50" ry="7" fill="#e2dcd0"/>
+            <!-- Copo bebida -->
+            <path d="M78 26 H102 L98 78 H82 Z" fill="#6b0008" stroke="#ccae62" stroke-width="2"/>
+            <rect x="75" y="22" width="30" height="6" rx="3" fill="#f4f1ea" stroke="#8c6d3f" stroke-width="1.5"/>
+            <path d="M90 22 L95 10" stroke="#ccae62" stroke-width="3" stroke-linecap="round"/>
+            <!-- Batata -->
+            <rect x="14" y="34" width="6" height="24" rx="2" fill="#f5b82e"/>
+            <rect x="22" y="28" width="6" height="30" rx="2" fill="#e6a21e"/>
+            <rect x="30" y="32" width="6" height="26" rx="2" fill="#f5b82e"/>
+            <path d="M10 48 H40 L36 78 H14 Z" fill="#9c000e" stroke="#ccae62" stroke-width="2"/>
+            <!-- Burger frente -->
+            <path d="M32 60 C32 45, 80 45, 80 60 Z" fill="#d99b43" stroke="#8c6d3f" stroke-width="1.8"/>
+            <rect x="30" y="62" width="52" height="9" rx="4.5" fill="#5e2318"/>
+            <path d="M33 72 H79 C79 78, 74 81, 68 81 H44 C38 81, 33 78, 33 72 Z" fill="#d99b43" stroke="#8c6d3f" stroke-width="1.8"/>
+          </svg>`,
+
+        fries: `
+          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="85" rx="34" ry="6" fill="#e2dcd0"/>
+            <rect x="38" y="20" width="8" height="34" rx="3" fill="#f5b82e" transform="rotate(-10 38 20)"/>
+            <rect x="49" y="14" width="8" height="38" rx="3" fill="#e6a21e"/>
+            <rect x="60" y="16" width="8" height="36" rx="3" fill="#f5b82e"/>
+            <rect x="71" y="21" width="8" height="34" rx="3" fill="#e6a21e" transform="rotate(9 71 21)"/>
+            <path d="M32 42 Q60 52 88 42 L80 82 H40 Z" fill="#8b000c" stroke="#ccae62" stroke-width="2.2"/>
+            <circle cx="60" cy="63" r="8" fill="#ccae62" opacity="0.9"/>
+          </svg>`,
+
+        nuggets: `
+          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="82" rx="42" ry="7" fill="#e2dcd0"/>
+            <ellipse cx="42" cy="54" rx="18" ry="12" fill="#d48932" stroke="#8c4e12" stroke-width="2"/>
+            <ellipse cx="74" cy="50" rx="19" ry="12" fill="#e09a3e" stroke="#8c4e12" stroke-width="2"/>
+            <ellipse cx="58" cy="67" rx="20" ry="12" fill="#cc7a29" stroke="#8c4e12" stroke-width="2"/>
+            <circle cx="88" cy="70" r="10" fill="#6b0008" stroke="#ccae62" stroke-width="2"/>
+          </svg>`,
+
+        onion_rings: `
+          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="83" rx="40" ry="6" fill="#e2dcd0"/>
+            <ellipse cx="52" cy="56" rx="22" ry="14" fill="none" stroke="#d48932" stroke-width="10"/>
+            <ellipse cx="70" cy="44" rx="20" ry="12" fill="none" stroke="#e09a3e" stroke-width="9"/>
+            <ellipse cx="62" cy="66" rx="22" ry="12" fill="none" stroke="#cc7a29" stroke-width="9"/>
+          </svg>`,
+
+        soda: `
+          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="85" rx="28" ry="6" fill="#e2dcd0"/>
+            <path d="M40 28 H80 L74 82 H46 Z" fill="#6b0008" stroke="#ccae62" stroke-width="2.2"/>
+            <rect x="36" y="22" width="48" height="8" rx="4" fill="#f4f1ea" stroke="#8c6d3f" stroke-width="2"/>
+            <path d="M60 22 L68 8" stroke="#ccae62" stroke-width="4" stroke-linecap="round"/>
+            <rect x="46" y="46" width="28" height="14" rx="4" fill="#ccae62" opacity="0.9"/>
+          </svg>`,
+
+        juice: `
+          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="85" rx="26" ry="6" fill="#e2dcd0"/>
+            <path d="M42 28 H78 L73 82 H47 Z" fill="#f59e0b" stroke="#b06000" stroke-width="2"/>
+            <circle cx="76" cy="28" r="11" fill="#fbbf24" stroke="#b06000" stroke-width="2"/>
+            <path d="M56 28 L50 10" stroke="#188038" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>`,
+
+        milkshake: `
+          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="85" rx="26" ry="6" fill="#e2dcd0"/>
+            <path d="M42 36 H78 L72 82 H48 Z" fill="#6b3e26" stroke="#8c6d3f" stroke-width="2"/>
+            <path d="M38 36 C38 20, 82 20, 82 36 Z" fill="#fff8eb" stroke="#e2dcd0" stroke-width="2"/>
+            <circle cx="60" cy="18" r="6" fill="#c5221f"/>
+            <path d="M66 24 L76 10" stroke="#ccae62" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>`,
+
+        brownie: `
+          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="82" rx="42" ry="7" fill="#e2dcd0"/>
+            <polygon points="28,54 60,38 92,54 60,70" fill="#5c2c16" stroke="#3b1a0c" stroke-width="2"/>
+            <polygon points="28,54 60,70 60,80 28,64" fill="#421e0e"/>
+            <polygon points="92,54 60,70 60,80 92,64" fill="#361709"/>
+            <circle cx="60" cy="40" r="14" fill="#fff8eb" stroke="#e2dcd0" stroke-width="2"/>
+            <path d="M50 38 Q60 48 70 38" fill="none" stroke="#5c2c16" stroke-width="3" stroke-linecap="round"/>
+          </svg>`,
+
+        sundae: `
+          <svg viewBox="0 0 120 96" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="85" rx="26" ry="6" fill="#e2dcd0"/>
+            <path d="M44 46 H76 L70 82 H50 Z" fill="#ffffff" stroke="#ccae62" stroke-width="2.2"/>
+            <path d="M40 46 C40 24, 80 24, 80 46 Z" fill="#fff8eb" stroke="#e2dcd0" stroke-width="2"/>
+            <path d="M45 36 Q60 44 75 36" fill="none" stroke="#5c2c16" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="60" cy="23" r="5.5" fill="#c5221f"/>
+          </svg>`
+      };
+
+      return svgs[artKey] || svgs.burger_classic;
+    }
+
+    /* -------------------------------------------------------------------
+       2. CATÁLOGO DE CATEGORIAS, PRODUTOS, ADICIONAIS E UPSELL
+    -------------------------------------------------------------------- */
+    const CATEGORIES = [
+      { id: 'lanches', name: 'Lanches', icon: '🍔', subtitle: 'Hambúrgueres artesanais • Toque para personalizar ou transformar em Combo' },
+      { id: 'combos', name: 'Combos', icon: '🍱', subtitle: 'Lanche + Batata Média + Bebida Média com preço especial' },
+      { id: 'acompanhamentos', name: 'Acompanhamentos', icon: '🍟', subtitle: 'Porções crocantes preparadas na hora' },
+      { id: 'bebidas', name: 'Bebidas', icon: '🥤', subtitle: 'Refrigerantes, sucos naturais e milkshakes' },
+      { id: 'sobremesas', name: 'Sobremesas', icon: '🍨', subtitle: 'Doces artesanais para encerrar com chave de ouro' }
+    ];
+
+    const PRODUCTS = [
+      // LANCHES
+      {
+        id: 'l1',
+        category: 'lanches',
+        name: 'Maison Duplo Cheddar',
+        desc: '2 carnes angus 120g, creme de cheddar inglês, bacon crocante e pão brioche selado.',
+        price: 29.90,
+        badge: 'Mais Pedido',
+        art: 'burger_double',
+        customizable: true,
+        canUpgradeToCombo: true
+      },
+      {
+        id: 'l2',
+        category: 'lanches',
+        name: 'Clássico Imperial',
+        desc: 'Carne bovina 150g na brasa, queijo prato, alface americana, tomate, picles e molho da casa.',
+        price: 24.90,
+        badge: null,
+        art: 'burger_classic',
+        customizable: true,
+        canUpgradeToCombo: true
+      },
+      {
+        id: 'l3',
+        category: 'lanches',
+        name: 'Crispy Chicken Gold',
+        desc: 'Filé de frango super crocante, maionese de ervas finas e alface fresca no pão brioche.',
+        price: 25.90,
+        badge: 'Crocante',
+        art: 'burger_chicken',
+        customizable: true,
+        canUpgradeToCombo: true
+      },
+
+      // COMBOS
+      {
+        id: 'c1',
+        category: 'combos',
+        name: 'Combo Maison Duplo',
+        desc: 'Maison Duplo Cheddar + Batata Média crocante + Bebida Média à escolha.',
+        price: 42.90,
+        badge: 'Destaque',
+        art: 'combo_box',
+        customizable: true,
+        isCombo: true
+      },
+      {
+        id: 'c2',
+        category: 'combos',
+        name: 'Combo Clássico Imperial',
+        desc: 'Clássico Imperial + Batata Média crocante + Bebida Média à escolha.',
+        price: 37.90,
+        badge: null,
+        art: 'combo_box',
+        customizable: true,
+        isCombo: true
+      },
+      {
+        id: 'c3',
+        category: 'combos',
+        name: 'Combo Crispy Chicken',
+        desc: 'Crispy Chicken Gold + Batata Média crocante + Bebida Média à escolha.',
+        price: 38.90,
+        badge: 'Economia',
+        art: 'combo_box',
+        customizable: true,
+        isCombo: true
+      },
+
+      // ACOMPANHAMENTOS
+      {
+        id: 'a1',
+        category: 'acompanhamentos',
+        name: 'Batata Frita Rústica',
+        desc: 'Porção média sequinha e dourada com sal fino e toque de páprica.',
+        price: 13.90,
+        badge: 'Favorita',
+        art: 'fries',
+        customizable: false
+      },
+      {
+        id: 'a2',
+        category: 'acompanhamentos',
+        name: 'Nuggets Artesanais (6 unid.)',
+        desc: '6 unidades de peito de frango empanado crocante com molho barbecue.',
+        price: 14.90,
+        badge: null,
+        art: 'nuggets',
+        customizable: false
+      },
+      {
+        id: 'a3',
+        category: 'acompanhamentos',
+        name: 'Onion Rings (8 unid.)',
+        desc: 'Anéis de cebola empanados crocantes por fora e macios por dentro.',
+        price: 15.50,
+        badge: null,
+        art: 'onion_rings',
+        customizable: false
+      },
+
+      // BEBIDAS
+      {
+        id: 'b1',
+        category: 'bebidas',
+        name: 'Refrigerante Cola 500ml',
+        desc: 'Bem gelado com gelo e limão opcional.',
+        price: 9.50,
+        badge: null,
+        art: 'soda',
+        customizable: false
+      },
+      {
+        id: 'b2',
+        category: 'bebidas',
+        name: 'Suco Natural de Laranja',
+        desc: '400ml espremido na hora, sem adição de açúcar.',
+        price: 11.90,
+        badge: '100% Fruta',
+        art: 'juice',
+        customizable: false
+      },
+      {
+        id: 'b3',
+        category: 'bebidas',
+        name: 'Milkshake Belga 400ml',
+        desc: 'Sorvete de baunilha batido com calda de chocolate belga e chantilly.',
+        price: 17.90,
+        badge: 'Especial',
+        art: 'milkshake',
+        customizable: false
+      },
+
+      // SOBREMESAS
+      {
+        id: 's1',
+        category: 'sobremesas',
+        name: 'Brownie com Sorvete',
+        desc: 'Brownie quentinho de chocolate meio amargo com bola de creme.',
+        price: 15.90,
+        badge: 'Irresistível',
+        art: 'brownie',
+        customizable: false
+      },
+      {
+        id: 's2',
+        category: 'sobremesas',
+        name: 'Sundae Calda Quente',
+        desc: 'Sorvete cremoso de baunilha com calda de chocolate e castanhas.',
+        price: 11.90,
+        badge: null,
+        art: 'sundae',
+        customizable: false
+      }
+    ];
+
+    // Regras de Personalização solicitadas
+    const COMBO_UPGRADE_PRICE = 14.90;
+    const COMBO_DRINKS = ['Cola Média', 'Guaraná Médio', 'Suco Laranja'];
+
+    const EXTRAS = [
+      { id: 'ex_bacon', name: 'Bacon Crocante', price: 5.00 },
+      { id: 'ex_cheddar', name: 'Cheddar Cremoso', price: 4.50 },
+      { id: 'ex_burger', name: 'Hambúrguer Extra', price: 9.00 },
+      { id: 'ex_sauce', name: 'Molho da Casa', price: 3.00 }
+    ];
+
+    const REMOVALS = ['Sem Cebola', 'Sem Picles', 'Sem Tomate', 'Sem Alface'];
+
+    // Upsell rápido no carrinho (1 clique)
+    const UPSELL_ITEMS = [
+      { id: 'up_fries', name: 'Batata Frita', price: 11.90, emoji: '🍟', category: 'acompanhamentos' },
+      { id: 'up_soda', name: 'Refrigerante Lata', price: 7.50, emoji: '🥤', category: 'bebidas' },
+      { id: 'up_brownie', name: 'Brownie', price: 13.90, emoji: '🍫', category: 'sobremesas' }
+    ];
+
+    /* -------------------------------------------------------------------
+       3. ESTADO GLOBAL DO TOTEM
+    -------------------------------------------------------------------- */
+    const state = {
+      consumptionMode: 'Comer Aqui',
+      activeCategory: 'lanches',
+      cart: [],
+      orderCounter: 42,
+      paymentMethod: 'pix',
+      pixTimerInterval: null,
+      pixSecondsLeft: 300,
+      successCountdownInterval: null,
+      successSecondsLeft: 20,
+      successCountdownPaused: false,
+      pendingConfirmAction: null,
+
+      modal: {
+        product: null,
+        isComboUpgrade: false,
+        comboDrink: COMBO_DRINKS[0],
+        selectedExtras: [],
+        selectedRemovals: [],
+        qty: 1
+      }
+    };
+
+    /* -------------------------------------------------------------------
+       4. UTILITÁRIOS
+    -------------------------------------------------------------------- */
+    function formatBRL(value) {
+      return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    let toastTimer = null;
+    function showToast(message, icon = '✓') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-icon').textContent = icon;
+      document.getElementById('toast-message').textContent = message;
+      toast.classList.remove('opacity-0', '-translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('opacity-0', '-translate-y-4');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2200);
+    }
+
+    function showScreen(screenId) {
+      ['screen-welcome', 'screen-menu', 'screen-payment', 'screen-success'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(screenId).classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    /* -------------------------------------------------------------------
+       5. NAVEGAÇÃO INICIAL E CARDÁPIO
+    -------------------------------------------------------------------- */
+    function startOrder(mode) {
+      state.consumptionMode = mode;
+      updateModeBadges();
+      renderCategories();
+      renderProducts();
+      updateCartBar();
+      showScreen('screen-menu');
+    }
+
+    function toggleConsumptionMode() {
+      state.consumptionMode = state.consumptionMode === 'Comer Aqui' ? 'Para Viagem' : 'Comer Aqui';
+      updateModeBadges();
+      showToast(`Tipo de consumo: ${state.consumptionMode}`, state.consumptionMode === 'Comer Aqui' ? '🍽️' : '🛍️');
+    }
+
+    function updateModeBadges() {
+      const icon = state.consumptionMode === 'Comer Aqui' ? '🍽️' : '🛍️';
+      document.getElementById('badge-mode-icon').textContent = icon;
+      document.getElementById('badge-mode-text').textContent = state.consumptionMode;
+      document.getElementById('payment-mode-badge').textContent = `${icon} ${state.consumptionMode}`;
+      document.getElementById('cart-modal-mode').textContent = `${icon} ${state.consumptionMode}`;
+    }
+
+    function selectCategory(catId) {
+      state.activeCategory = catId;
+      renderCategories();
+      renderProducts();
+    }
+
+    function renderCategories() {
+      const nav = document.getElementById('category-nav');
+      nav.innerHTML = CATEGORIES.map(cat => {
+        const active = cat.id === state.activeCategory;
+        return `
+          <button
+            onclick="selectCategory('${cat.id}')"
+            class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition active:scale-95 shrink-0 cursor-pointer text-left ${
+              active ? 'cat-btn-active font-bold' : 'cat-btn-idle font-medium'
+            }"
+          >
+            <span class="text-2xl leading-none">${cat.icon}</span>
+            <span class="text-xs sm:text-sm leading-tight whitespace-nowrap md:whitespace-normal">${cat.name}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function renderProducts() {
+      const cat = CATEGORIES.find(c => c.id === state.activeCategory);
+      const list = PRODUCTS.filter(p => p.category === state.activeCategory);
+
+      document.getElementById('current-category-title').textContent = cat.name;
+      document.getElementById('current-category-subtitle').textContent = cat.subtitle;
+      document.getElementById('current-category-count').textContent = `${list.length} ${list.length === 1 ? 'opção' : 'opções'}`;
+
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = list.map(prod => {
+        const actionLabel = prod.customizable ? 'Personalizar' : 'Adicionar';
+        const onClickHandler = prod.customizable
+          ? `openProductModal('${prod.id}')`
+          : `quickAddProduct('${prod.id}')`;
+
+        return `
+          <article class="product-card rounded-3xl overflow-hidden flex flex-col">
+            <!-- Container SVG Estilizado -->
+            <div onclick="${onClickHandler}" class="relative h-44 art-stage flex items-center justify-center p-5 cursor-pointer">
+              <div class="w-36 h-28">
+                ${getProductSVG(prod.art)}
+              </div>
+              ${prod.badge ? `
+                <span class="absolute top-3 left-3 badge-gold font-bold text-[10px] uppercase tracking-wider px-3 py-1 rounded-full shadow-sm">
+                  ${prod.badge}
+                </span>
+              ` : ''}
+            </div>
+
+            <!-- Informações e Botão -->
+            <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between">
+              <div onclick="${onClickHandler}" class="cursor-pointer">
+                <h3 class="font-bold text-base sm:text-lg text-dark leading-snug">
+                  ${prod.name}
+                </h3>
+                <p class="text-xs text-muted mt-1 line-clamp-2 leading-relaxed">
+                  ${prod.desc}
+                </p>
+              </div>
+
+              <div class="mt-4 pt-3.5 border-t border-theme flex items-center justify-between gap-2">
+                <span class="font-extrabold text-xl text-dark">
+                  ${formatBRL(prod.price)}
+                </span>
+                <button
+                  onclick="${onClickHandler}"
+                  class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm cursor-pointer transition active:scale-95 ${
+                    prod.customizable
+                      ? 'btn-gold'
+                      : 'bg-primary-container text-on-primary border border-gold hover:brightness-95'
+                  }"
+                >
+                  ${prod.customizable ? '✨ ' : '+ '}${actionLabel}
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function quickAddProduct(productId) {
+      const prod = PRODUCTS.find(p => p.id === productId);
+      if (!prod) return;
+
+      const existing = state.cart.find(item => item.productId === productId && item.notes.length === 0);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        state.cart.push({
+          uid: Date.now() + Math.random().toString(16).slice(2),
+          productId: prod.id,
+          name: prod.name,
+          category: prod.category,
+          isCombo: false,
+          unitPrice: prod.price,
+          qty: 1,
+          notes: []
         });
+      }
 
-        // ============================================
-        // BUSCAR PRODUTO NO CATÁLOGO
-        // ============================================
-        function buscarProdutoPorId(id) {
-            for (const cat of categorias) {
-                const encontrado = cat.produtos.find(p => p.id === id);
-                if (encontrado) return encontrado;
-            }
-            return null;
+      updateCartBar();
+      showToast(`${prod.name} adicionado!`, '🛒');
+    }
+
+    /* -------------------------------------------------------------------
+       6. MODAL DE PERSONALIZAÇÃO (LANCHES E COMBOS)
+    -------------------------------------------------------------------- */
+    function openProductModal(productId) {
+      const prod = PRODUCTS.find(p => p.id === productId);
+      if (!prod) return;
+
+      state.modal = {
+        product: prod,
+        isComboUpgrade: false,
+        comboDrink: COMBO_DRINKS[0],
+        selectedExtras: [],
+        selectedRemovals: [],
+        qty: 1
+      };
+
+      const catObj = CATEGORIES.find(c => c.id === prod.category);
+      document.getElementById('modal-prod-art').innerHTML = getProductSVG(prod.art);
+      document.getElementById('modal-prod-category').textContent = catObj ? catObj.name : '';
+      document.getElementById('modal-prod-name').textContent = prod.name;
+      document.getElementById('modal-prod-desc').textContent = prod.desc;
+
+      // Toggle de transformar em Combo só aparece para Lanches
+      document.getElementById('section-combo-toggle').classList.toggle('hidden', !prod.canUpgradeToCombo);
+
+      renderModalOptions();
+      document.getElementById('modal-product').classList.remove('hidden');
+    }
+
+    function closeProductModal() {
+      document.getElementById('modal-product').classList.add('hidden');
+    }
+
+    function toggleComboUpgrade() {
+      state.modal.isComboUpgrade = !state.modal.isComboUpgrade;
+      renderModalOptions();
+    }
+
+    function selectComboDrink(drink) {
+      state.modal.comboDrink = drink;
+      renderModalOptions();
+    }
+
+    function toggleExtra(extraId) {
+      const idx = state.modal.selectedExtras.indexOf(extraId);
+      if (idx >= 0) {
+        state.modal.selectedExtras.splice(idx, 1);
+      } else {
+        state.modal.selectedExtras.push(extraId);
+      }
+      renderModalOptions();
+    }
+
+    function toggleRemoval(removalName) {
+      const idx = state.modal.selectedRemovals.indexOf(removalName);
+      if (idx >= 0) {
+        state.modal.selectedRemovals.splice(idx, 1);
+      } else {
+        state.modal.selectedRemovals.push(removalName);
+      }
+      renderModalOptions();
+    }
+
+    function changeModalQty(delta) {
+      state.modal.qty = Math.max(1, Math.min(20, state.modal.qty + delta));
+      renderModalOptions();
+    }
+
+    function calculateModalUnitPrice() {
+      const m = state.modal;
+      if (!m.product) return 0;
+      let total = m.product.price;
+      if (m.isComboUpgrade) total += COMBO_UPGRADE_PRICE;
+      m.selectedExtras.forEach(exId => {
+        const ex = EXTRAS.find(e => e.id === exId);
+        if (ex) total += ex.price;
+      });
+      return total;
+    }
+
+    function renderModalOptions() {
+      const m = state.modal;
+      const isComboActive = Boolean(m.product.isCombo || m.isComboUpgrade);
+
+      // Atualiza visual do botão Toggle Combo
+      const btnToggle = document.getElementById('btn-toggle-combo');
+      const track = document.getElementById('combo-switch-track');
+      const thumb = document.getElementById('combo-switch-thumb');
+
+      if (m.isComboUpgrade) {
+        btnToggle.style.borderColor = 'var(--dourado-base)';
+        btnToggle.style.backgroundColor = 'var(--primary-container)';
+        track.style.backgroundColor = 'var(--success)';
+        thumb.style.transform = 'translateX(24px)';
+      } else {
+        btnToggle.style.borderColor = 'var(--border)';
+        btnToggle.style.backgroundColor = 'var(--surface)';
+        track.style.backgroundColor = '#cbd5e1';
+        thumb.style.transform = 'translateX(0px)';
+      }
+
+      // Bebida do Combo
+      const drinkSection = document.getElementById('section-combo-drink');
+      drinkSection.classList.toggle('hidden', !isComboActive);
+      document.getElementById('combo-drink-options').innerHTML = COMBO_DRINKS.map(drink => {
+        const active = m.comboDrink === drink;
+        return `
+          <button
+            onclick="selectComboDrink('${drink}')"
+            class="py-2.5 px-3 rounded-xl text-xs font-bold border-2 transition cursor-pointer ${
+              active
+                ? 'cat-btn-active'
+                : 'bg-surface border-theme text-muted hover:text-dark'
+            }"
+          >
+            🥤 ${drink}
+          </button>
+        `;
+      }).join('');
+
+      // Adicionais Pagos
+      document.getElementById('extras-list').innerHTML = EXTRAS.map(ex => {
+        const selected = m.selectedExtras.includes(ex.id);
+        return `
+          <button
+            onclick="toggleExtra('${ex.id}')"
+            class="flex items-center justify-between p-3.5 rounded-2xl border-2 transition active:scale-95 cursor-pointer ${
+              selected ? 'cat-btn-active' : 'bg-surface border-theme text-dark hover:bg-surface-alt'
+            }"
+          >
+            <div class="flex items-center gap-2.5 text-left">
+              <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold ${
+                selected ? 'badge-success' : 'bg-surface-alt text-muted'
+              }">
+                ${selected ? '✓' : '+'}
+              </span>
+              <span class="font-semibold text-xs sm:text-sm">${ex.name}</span>
+            </div>
+            <span class="font-bold text-xs sm:text-sm" style="color: var(--primary-dark);">+ ${formatBRL(ex.price)}</span>
+          </button>
+        `;
+      }).join('');
+
+      // Retirar Ingredientes (Grátis)
+      document.getElementById('removals-list').innerHTML = REMOVALS.map(rem => {
+        const selected = m.selectedRemovals.includes(rem);
+        return `
+          <button
+            onclick="toggleRemoval('${rem}')"
+            class="px-4 py-2.5 rounded-xl border-2 font-semibold text-xs sm:text-sm transition active:scale-95 cursor-pointer ${
+              selected
+                ? 'badge-danger border-[#c5221f]'
+                : 'bg-surface border-theme text-muted hover:text-dark'
+            }"
+          >
+            ${selected ? '✕ ' : ''}${rem}
+          </button>
+        `;
+      }).join('');
+
+      // Quantidade e Preço Total
+      document.getElementById('modal-qty-value').textContent = m.qty;
+      document.getElementById('modal-total-btn').textContent = formatBRL(calculateModalUnitPrice() * m.qty);
+    }
+
+    function confirmAddToCart() {
+      const m = state.modal;
+      if (!m.product) return;
+
+      const isComboFinal = Boolean(m.product.isCombo || m.isComboUpgrade);
+      const unitPrice = calculateModalUnitPrice();
+      const notes = [];
+
+      if (m.isComboUpgrade) {
+        notes.push(`Combo: Batata M + ${m.comboDrink}`);
+      } else if (m.product.isCombo) {
+        notes.push(`Bebida: ${m.comboDrink}`);
+      }
+
+      m.selectedExtras.forEach(exId => {
+        const ex = EXTRAS.find(e => e.id === exId);
+        if (ex) notes.push(`+ ${ex.name}`);
+      });
+
+      m.selectedRemovals.forEach(rem => notes.push(rem));
+
+      const itemName = m.isComboUpgrade ? `Combo ${m.product.name}` : m.product.name;
+
+      state.cart.push({
+        uid: Date.now() + Math.random().toString(16).slice(2),
+        productId: m.product.id,
+        name: itemName,
+        category: isComboFinal ? 'combos' : m.product.category,
+        isCombo: isComboFinal,
+        comboDrink: isComboFinal ? m.comboDrink : null,
+        unitPrice,
+        qty: m.qty,
+        notes
+      });
+
+      updateCartBar();
+      closeProductModal();
+      showToast(`${m.qty}x ${itemName} adicionado!`, '🛒');
+    }
+
+    /* -------------------------------------------------------------------
+       7. CARRINHO, REVISÃO E UPSELL
+    -------------------------------------------------------------------- */
+    function getCartTotals() {
+      const totalItems = state.cart.reduce((acc, item) => acc + item.qty, 0);
+      const totalPrice = state.cart.reduce((acc, item) => acc + item.unitPrice * item.qty, 0);
+      return { totalItems, totalPrice };
+    }
+
+    function updateCartBar() {
+      const { totalItems, totalPrice } = getCartTotals();
+      document.getElementById('cart-count-badge').textContent = totalItems;
+      document.getElementById('cart-total-display').textContent = formatBRL(totalPrice);
+      document.getElementById('btn-open-cart').disabled = totalItems === 0;
+      document.getElementById('btn-clear-cart').disabled = totalItems === 0;
+    }
+
+    function openCartModal() {
+      if (state.cart.length === 0) return;
+      renderCartModal();
+      document.getElementById('modal-cart').classList.remove('hidden');
+    }
+
+    function closeCartModal() {
+      document.getElementById('modal-cart').classList.add('hidden');
+    }
+
+    function changeCartItemQty(uid, delta) {
+      const item = state.cart.find(i => i.uid === uid);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) {
+        state.cart = state.cart.filter(i => i.uid !== uid);
+      }
+      updateCartBar();
+      if (state.cart.length === 0) {
+        closeCartModal();
+        showToast('Carrinho esvaziado.', '🗑️');
+      } else {
+        renderCartModal();
+      }
+    }
+
+    function removeCartItem(uid) {
+      state.cart = state.cart.filter(i => i.uid !== uid);
+      updateCartBar();
+      if (state.cart.length === 0) {
+        closeCartModal();
+        showToast('Carrinho esvaziado.', '🗑️');
+      } else {
+        renderCartModal();
+      }
+    }
+
+    function addUpsellItem(upsellId) {
+      const up = UPSELL_ITEMS.find(u => u.id === upsellId);
+      if (!up) return;
+
+      const existing = state.cart.find(i => i.upsellId === upsellId);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        state.cart.push({
+          uid: Date.now() + Math.random().toString(16).slice(2),
+          upsellId,
+          name: up.name,
+          category: up.category,
+          isCombo: false,
+          unitPrice: up.price,
+          qty: 1,
+          notes: ['Oferta rápida']
+        });
+      }
+
+      updateCartBar();
+      renderCartModal();
+      showToast(`${up.name} adicionado!`, up.emoji);
+    }
+
+    function renderCartModal() {
+      const container = document.getElementById('cart-items-container');
+      container.innerHTML = state.cart.map(item => `
+        <div class="bg-surface-alt border border-theme rounded-2xl p-4 flex items-center justify-between gap-3">
+          <div class="flex-1 min-w-0">
+            <h4 class="font-bold text-dark text-sm sm:text-base truncate">${item.name}</h4>
+            ${item.notes.length > 0 ? `
+              <p class="text-xs text-muted mt-1 leading-relaxed">${item.notes.join(' • ')}</p>
+            ` : ''}
+            <span class="inline-block font-extrabold text-sm mt-1.5" style="color: var(--primary-dark);">
+              ${formatBRL(item.unitPrice * item.qty)}
+            </span>
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <div class="flex items-center bg-surface rounded-xl border border-theme p-1">
+              <button
+                onclick="changeCartItemQty('${item.uid}', -1)"
+                class="w-9 h-9 rounded-lg bg-surface-alt hover:bg-primary-container font-bold text-base flex items-center justify-center cursor-pointer"
+                aria-label="Diminuir quantidade"
+              >
+                −
+              </button>
+              <span class="w-8 text-center font-extrabold text-sm text-dark">${item.qty}</span>
+              <button
+                onclick="changeCartItemQty('${item.uid}', 1)"
+                class="w-9 h-9 rounded-lg bg-primary-container text-on-primary font-bold text-base flex items-center justify-center cursor-pointer"
+                aria-label="Aumentar quantidade"
+              >
+                +
+              </button>
+            </div>
+            <button
+              onclick="removeCartItem('${item.uid}')"
+              class="w-9 h-9 rounded-xl btn-danger-soft font-bold text-sm flex items-center justify-center cursor-pointer"
+              title="Excluir item"
+              aria-label="Excluir item"
+            >
+              🗑
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      // Renderiza Faixa de Upsell
+      document.getElementById('upsell-grid').innerHTML = UPSELL_ITEMS.map(up => `
+        <div class="bg-surface rounded-2xl p-3 border border-theme flex sm:flex-col items-center justify-between gap-2 text-center shadow-theme-sm">
+          <div class="flex sm:flex-col items-center gap-2">
+            <span class="text-3xl">${up.emoji}</span>
+            <div class="text-left sm:text-center">
+              <div class="font-bold text-xs sm:text-sm text-dark leading-tight">${up.name}</div>
+              <div class="font-extrabold text-xs sm:text-sm mt-0.5" style="color: var(--primary-dark);">${formatBRL(up.price)}</div>
+            </div>
+          </div>
+          <button
+            onclick="addUpsellItem('${up.id}')"
+            class="px-3 py-2 sm:w-full rounded-xl bg-primary-container border border-gold text-on-primary hover:brightness-95 active:scale-95 font-bold text-xs transition cursor-pointer"
+          >
+            + Adicionar
+          </button>
+        </div>
+      `).join('');
+
+      const { totalPrice } = getCartTotals();
+      document.getElementById('cart-modal-total').textContent = formatBRL(totalPrice);
+      updateModeBadges();
+    }
+
+    /* -------------------------------------------------------------------
+       8. PAGAMENTO (PIX COM TIMER DE 5 MIN + CARTÃO)
+    -------------------------------------------------------------------- */
+    function goToPayment() {
+      if (state.cart.length === 0) return;
+      closeCartModal();
+
+      const { totalItems, totalPrice } = getCartTotals();
+      document.getElementById('payment-total-amount').textContent = formatBRL(totalPrice);
+      document.getElementById('payment-items-summary').textContent = `${totalItems} ${totalItems === 1 ? 'item' : 'itens'} • ${state.consumptionMode}`;
+
+      selectPaymentMethod('pix');
+      startPixTimer();
+      showScreen('screen-payment');
+    }
+
+    function backToMenuFromPayment() {
+      stopPixTimer();
+      showScreen('screen-menu');
+    }
+
+    function selectPaymentMethod(method) {
+      state.paymentMethod = method;
+      const tabPix = document.getElementById('pay-tab-pix');
+      const tabCard = document.getElementById('pay-tab-card');
+      const panelPix = document.getElementById('payment-panel-pix');
+      const panelCard = document.getElementById('payment-panel-card');
+
+      const activeClasses = 'p-5 rounded-3xl border-2 text-left transition active:scale-95 flex items-center gap-4 cursor-pointer cat-btn-active';
+      const idleClasses = 'p-5 rounded-3xl border-2 border-theme bg-surface text-left transition active:scale-95 flex items-center gap-4 cursor-pointer hover:bg-surface-alt';
+
+      if (method === 'pix') {
+        tabPix.className = activeClasses;
+        tabCard.className = idleClasses;
+        panelPix.classList.remove('hidden');
+        panelCard.classList.add('hidden');
+      } else {
+        tabCard.className = activeClasses;
+        tabPix.className = idleClasses;
+        panelCard.classList.remove('hidden');
+        panelPix.classList.add('hidden');
+      }
+    }
+
+    function startPixTimer() {
+      stopPixTimer();
+      state.pixSecondsLeft = 300;
+      updatePixTimerDisplay();
+      state.pixTimerInterval = setInterval(() => {
+        state.pixSecondsLeft--;
+        if (state.pixSecondsLeft <= 0) {
+          state.pixSecondsLeft = 300;
+          showToast('QR Code Pix renovado automaticamente.', '🔄');
         }
+        updatePixTimerDisplay();
+      }, 1000);
+    }
 
-        // ============================================
-        // RENDERIZAR ABAS DE CATEGORIAS
-        // ============================================
-        function renderizarAbas() {
-            categoriasBar.innerHTML = '';
-            categorias.forEach(cat => {
-                const tab = document.createElement('button');
-                tab.className = 'cat-tab' + (cat.id === categoriaAtualId ? ' active' : '');
-                tab.onclick = () => selecionarCategoria(cat.id);
-                tab.innerHTML = `
-                    <span class="cat-icone">${cat.icone}</span>
-                    <span>${cat.nome}</span>
-                    <span class="cat-qtd">${cat.produtos.length}</span>
-                `;
-                categoriasBar.appendChild(tab);
-            });
+    function stopPixTimer() {
+      if (state.pixTimerInterval) {
+        clearInterval(state.pixTimerInterval);
+        state.pixTimerInterval = null;
+      }
+    }
+
+    function updatePixTimerDisplay() {
+      const m = String(Math.floor(state.pixSecondsLeft / 60)).padStart(2, '0');
+      const s = String(state.pixSecondsLeft % 60).padStart(2, '0');
+      document.getElementById('pix-timer').textContent = `${m}:${s}`;
+    }
+
+    /* -------------------------------------------------------------------
+       9. CONFIRMAÇÃO, SENHA E ROTEAMENTO SILENCIOSO DE IMPRESSORAS
+    -------------------------------------------------------------------- */
+    function completePayment(methodLabel) {
+      stopPixTimer();
+
+      const senha = `#${String(state.orderCounter).padStart(3, '0')}`;
+      state.orderCounter += 1;
+
+      document.getElementById('order-password-display').textContent = senha;
+      document.getElementById('success-payment-method').textContent = methodLabel;
+      document.getElementById('success-mode-text').textContent = state.consumptionMode;
+
+      simulatePrinterRouting(senha, methodLabel);
+      showScreen('screen-success');
+      startSuccessCountdown();
+    }
+
+    function simulatePrinterRouting(senha, methodLabel) {
+      // Divisão automática dos itens reais do carrinho por setor:
+      // Cozinha / Chapa -> Lanches, Combos e Acompanhamentos
+      // Bebidas / Bar   -> Bebidas, Sobremesas e bebida vinculada a Combos
+      // Totem / Cliente -> Comprovante e Senha
+      const cozinhaItens = [];
+      const bebidasItens = [];
+
+      state.cart.forEach(item => {
+        if (['lanches', 'combos', 'acompanhamentos'].includes(item.category)) {
+          cozinhaItens.push(`${item.qty}x ${item.name}`);
         }
-
-        // ============================================
-        // SELECIONAR CATEGORIA
-        // ============================================
-        function selecionarCategoria(id) {
-            categoriaAtualId = id;
-            renderizarAbas();
-            renderizarProdutos();
-            document.getElementById('conteudoProdutos').scrollTop = 0;
+        if (['bebidas', 'sobremesas'].includes(item.category)) {
+          bebidasItens.push(`${item.qty}x ${item.name}`);
+        } else if (item.isCombo && item.comboDrink) {
+          bebidasItens.push(`${item.qty}x ${item.comboDrink} (Combo)`);
         }
+      });
 
-        // ============================================
-        // RENDERIZAR PRODUTOS DA CATEGORIA ATUAL
-        // ============================================
-        function renderizarProdutos() {
-            const categoria = categorias.find(c => c.id === categoriaAtualId);
-            tituloCategoria.innerText = categoria.nome;
-            contagemProdutos.innerText = `${categoria.produtos.length} produtos`;
+      const { totalPrice } = getCartTotals();
 
-            gridProdutos.innerHTML = '';
-            categoria.produtos.forEach(prod => {
-                const noCarrinho = carrinho.find(i => i.id === prod.id);
-                const qtdNoCarrinho = noCarrinho ? noCarrinho.qtd : 0;
-                const disponivel = prod.estoque - qtdNoCarrinho;
-                const esgotado = disponivel <= 0;
+      const jobs = [
+        {
+          id: 'job-cozinha',
+          setor: 'Cozinha / Chapa',
+          ip: '192.168.1.50:9100',
+          icon: '🔥',
+          itens: cozinhaItens,
+          delay: 450
+        },
+        {
+          id: 'job-bebidas',
+          setor: 'Bebidas / Bar',
+          ip: '192.168.1.51:9100',
+          icon: '🥤',
+          itens: bebidasItens,
+          delay: 800
+        },
+        {
+          id: 'job-cliente',
+          setor: 'Totem / Cliente',
+          ip: '192.168.1.52:9100',
+          icon: '🧾',
+          itens: [
+            `Senha ${senha} • ${state.consumptionMode}`,
+            `Pago (${methodLabel}): ${formatBRL(totalPrice)}`
+          ],
+          delay: 1100
+        }
+      ];
 
-                const card = document.createElement('div');
-                card.className = 'produto-card' + (esgotado ? ' esgotado' : '');
-
-                let badgeClass = 'badge-estoque';
-                if (disponivel <= 0) badgeClass += ' esgotado';
-                else if (disponivel <= 3) badgeClass += ' baixo';
-
-                card.innerHTML = `
-                    <div class="img-area">
-                        ${prod.icone}
-                        <span class="${badgeClass}">${esgotado ? 'Esgotado' : 'Estoque: ' + disponivel}</span>
-                    </div>
-                    <div class="info">
-                        <div class="nome">${prod.nome}</div>
-                        <div class="preco">R$ ${prod.preco.toFixed(2).replace('.', ',')}</div>
-                        <button class="btn-add" ${esgotado ? 'disabled' : ''}>
-                            ${esgotado ? 'Indisponível' : '+ Adicionar'}
-                        </button>
-                    </div>
-                `;
-
-                if (!esgotado) {
-                    card.querySelector('.btn-add').onclick = (e) => {
-                        e.stopPropagation();
-                        adicionarAoCarrinho(prod);
-                    };
+      const container = document.getElementById('printer-routing-logs');
+      container.innerHTML = jobs.map(job => {
+        const hasItems = job.itens.length > 0;
+        return `
+          <div class="bg-surface-alt border border-theme rounded-2xl p-4 flex flex-col justify-between">
+            <div>
+              <div class="font-bold text-sm text-dark flex items-center gap-1.5">
+                <span>${job.icon}</span>
+                <span>${job.setor}</span>
+              </div>
+              <div class="font-mono text-[11px] text-muted mt-0.5 mb-2.5">${job.ip}</div>
+              <ul class="text-xs text-dark space-y-1 mb-3">
+                ${hasItems
+                  ? job.itens.map(t => `<li class="truncate">• ${t}</li>`).join('')
+                  : '<li class="text-muted italic">Nenhum item para este setor</li>'
                 }
-                gridProdutos.appendChild(card);
-            });
+              </ul>
+            </div>
+            <div id="${job.id}-status" class="text-[11px] font-bold px-3 py-1.5 rounded-xl inline-flex items-center gap-1.5 w-fit ${
+              hasItems ? 'badge-warning' : 'bg-surface text-muted border border-theme'
+            }">
+              ${hasItems ? '⏳ Enviando POST...' : '— Sem impressão'}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Simulação assíncrona do retorno de impressão concluída
+      jobs.forEach(job => {
+        if (job.itens.length === 0) return;
+        setTimeout(() => {
+          const el = document.getElementById(`${job.id}-status`);
+          if (el) {
+            el.className = 'text-[11px] font-bold px-3 py-1.5 rounded-xl inline-flex items-center gap-1.5 w-fit badge-success';
+            el.textContent = '✓ Enviado / Impresso';
+          }
+        }, job.delay);
+      });
+    }
+
+    function startSuccessCountdown() {
+      stopSuccessCountdown();
+      state.successSecondsLeft = 20;
+      state.successCountdownPaused = false;
+      updateSuccessCountdownUI();
+
+      state.successCountdownInterval = setInterval(() => {
+        if (state.successCountdownPaused) return;
+        state.successSecondsLeft--;
+        updateSuccessCountdownUI();
+        if (state.successSecondsLeft <= 0) {
+          resetToWelcome();
         }
+      }, 1000);
+    }
 
-        // ============================================
-        // CARRINHO
-        // ============================================
-        function adicionarAoCarrinho(produto) {
-            const item = carrinho.find(i => i.id === produto.id);
-            const qtdAtual = item ? item.qtd : 0;
+    function stopSuccessCountdown() {
+      if (state.successCountdownInterval) {
+        clearInterval(state.successCountdownInterval);
+        state.successCountdownInterval = null;
+      }
+    }
 
-            if (qtdAtual >= produto.estoque) return;
+    function toggleSuccessCountdown() {
+      state.successCountdownPaused = !state.successCountdownPaused;
+      updateSuccessCountdownUI();
+    }
 
-            if (item) {
-                item.qtd++;
-            } else {
-                carrinho.push({
-                    id: produto.id,
-                    nome: produto.nome,
-                    preco: produto.preco,
-                    icone: produto.icone,
-                    qtd: 1,
-                    estoqueMax: produto.estoque
-                });
-            }
-            atualizarCarrinho();
-            renderizarProdutos();
+    function updateSuccessCountdownUI() {
+      const btn = document.getElementById('btn-pause-countdown');
+      if (state.successCountdownPaused) {
+        btn.innerHTML = `Contagem pausada (<span id="success-countdown">${state.successSecondsLeft}</span>s) • Retomar`;
+      } else {
+        btn.innerHTML = `Retornando ao início em <span id="success-countdown">${state.successSecondsLeft}</span>s (Pausar)`;
+      }
+    }
+
+    /* -------------------------------------------------------------------
+       10. CONFIRMAÇÕES CUSTOMIZADAS (LIMPAR / CANCELAR)
+    -------------------------------------------------------------------- */
+    function openConfirmModal(title, desc, actionFn) {
+      document.getElementById('confirm-title').textContent = title;
+      document.getElementById('confirm-desc').textContent = desc;
+      state.pendingConfirmAction = actionFn;
+      document.getElementById('modal-confirm').classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('modal-confirm').classList.add('hidden');
+      state.pendingConfirmAction = null;
+    }
+
+    function executeConfirmAction() {
+      const fn = state.pendingConfirmAction;
+      closeConfirmModal();
+      if (typeof fn === 'function') fn();
+    }
+
+    function requestClearCart() {
+      if (state.cart.length === 0) return;
+      openConfirmModal(
+        'Limpar carrinho?',
+        'Todos os itens adicionados serão removidos, mas você continuará no cardápio.',
+        () => {
+          state.cart = [];
+          updateCartBar();
+          showToast('Carrinho limpo.', '🗑️');
         }
+      );
+    }
 
-        function removerDoCarrinho(id) {
-            const index = carrinho.findIndex(i => i.id === id);
-            if (index === -1) return;
-            carrinho[index].qtd--;
-            if (carrinho[index].qtd <= 0) {
-                carrinho.splice(index, 1);
-            }
-            atualizarCarrinho();
-            renderizarProdutos();
-        }
+    function requestResetOrder() {
+      if (state.cart.length === 0) {
+        resetToWelcome();
+        return;
+      }
+      openConfirmModal(
+        'Cancelar pedido atual?',
+        'Seu carrinho será limpo e voltaremos para a tela inicial do totem.',
+        resetToWelcome
+      );
+    }
 
-        function aumentarNoCarrinho(id) {
-            const item = carrinho.find(i => i.id === id);
-            if (!item) return;
-            if (item.qtd >= item.estoqueMax) return;
-            item.qtd++;
-            atualizarCarrinho();
-            renderizarProdutos();
-        }
-
-        function calcularTotal() {
-            return carrinho.reduce((acc, item) => acc + item.preco * item.qtd, 0);
-        }
-
-        function calcularQtdTotal() {
-            return carrinho.reduce((acc, item) => acc + item.qtd, 0);
-        }
-
-        function formatarPreco(v) {
-            return 'R$ ' + v.toFixed(2).replace('.', ',');
-        }
-
-        function atualizarCarrinho() {
-            const total = calcularTotal();
-            const qtd = calcularQtdTotal();
-
-            carrinhoTotalBar.innerText = formatarPreco(total);
-            carrinhoBadge.innerText = qtd;
-            carrinhoTotalModal.innerText = formatarPreco(total);
-
-            if (qtd > 0) {
-                carrinhoBar.classList.add('visivel');
-            } else {
-                carrinhoBar.classList.remove('visivel');
-            }
-
-            renderizarListaCarrinho();
-        }
-
-        function renderizarListaCarrinho() {
-            if (carrinho.length === 0) {
-                listaCarrinho.innerHTML = `
-                    <div class="carrinho-vazio">
-                        <div class="emoji">🛒</div>
-                        <p>Seu carrinho está vazio.<br>Adicione produtos para continuar.</p>
-                    </div>
-                `;
-                carrinhoFooter.style.display = 'none';
-                return;
-            }
-
-            carrinhoFooter.style.display = 'block';
-            listaCarrinho.innerHTML = '';
-            carrinho.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'item-carrinho';
-                div.innerHTML = `
-                    <div class="item-img">${item.icone}</div>
-                    <div class="item-info">
-                        <div class="item-nome">${item.nome}</div>
-                        <div class="item-preco">${formatarPreco(item.preco)} cada</div>
-                    </div>
-                    <div class="item-qtd">
-                        <button onclick="removerDoCarrinho('${item.id}')">−</button>
-                        <span>${item.qtd}</span>
-                        <button onclick="aumentarNoCarrinho('${item.id}')">+</button>
-                    </div>
-                `;
-                listaCarrinho.appendChild(div);
-            });
-        }
-
-        // ============================================
-        // MODAL DO CARRINHO
-        // ============================================
-        function abrirCarrinho() {
-            modalCarrinho.classList.add('visivel');
-        }
-
-        function fecharCarrinho() {
-            modalCarrinho.classList.remove('visivel');
-        }
-
-        // ============================================
-        // PAGAMENTO PIX + CRONÔMETRO
-        // ============================================
-        function formatarTempo(seg) {
-            const m = String(Math.floor(seg / 60)).padStart(2, '0');
-            const s = String(seg % 60).padStart(2, '0');
-            return `${m}:${s}`;
-        }
-
-        function iniciarTimerPix() {
-            pararTimerPix();
-            segundosPix = 120;
-            pixTimerEl.classList.remove('urgente');
-            pixTimerEl.innerText = `⏱️ Expira em ${formatarTempo(segundosPix)}`;
-
-            timerPix = setInterval(() => {
-                segundosPix--;
-                if (segundosPix <= 30) {
-                    pixTimerEl.classList.add('urgente');
-                }
-                if (segundosPix <= 0) {
-                    pararTimerPix();
-                    fecharModal();
-                    return;
-                }
-                pixTimerEl.innerText = `⏱️ Expira em ${formatarTempo(segundosPix)}`;
-            }, 1000);
-        }
-
-        function pararTimerPix() {
-            if (timerPix) {
-                clearInterval(timerPix);
-                timerPix = null;
-            }
-        }
-
-        function abrirPagamentoCarrinho() {
-            if (carrinho.length === 0) return;
-            fecharCarrinho();
-            document.getElementById('modalTitulo').innerText = 'Pagamento via Pix';
-            document.getElementById('modalSubtitulo').innerText = `${calcularQtdTotal()} item(ns) no pedido`;
-            document.getElementById('modalTotalPix').innerText = formatarPreco(calcularTotal());
-            modalPagamento.classList.add('visivel');
-            iniciarTimerPix();
-        }
-
-        function fecharModal() {
-            pararTimerPix();
-            modalPagamento.classList.remove('visivel');
-        }
-
-        // ============================================
-        // FILA DE LIBERAÇÃO + BAIXA REAL DE ESTOQUE
-        // ============================================
-        function esperar(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        async function simularPagamentoAprovado() {
-            pararTimerPix();
-            modalPagamento.classList.remove('visivel');
-            liberandoProdutos = true;
-            clearTimeout(timerInatividade);
-
-            // Monta a fila expandida (um disparo de motor por unidade)
-            const fila = [];
-            carrinho.forEach(item => {
-                // Baixa real no estoque do catálogo
-                const prodCatalogo = buscarProdutoPorId(item.id);
-                if (prodCatalogo) {
-                    prodCatalogo.estoque = Math.max(0, prodCatalogo.estoque - item.qtd);
-                }
-                for (let i = 0; i < item.qtd; i++) {
-                    fila.push({ nome: item.nome, icone: item.icone });
-                }
-            });
-
-            // Exibe tela de progresso
-            sucessoIcone.innerText = '✅';
-            sucessoTitulo.innerText = 'Pagamento Aprovado!';
-            sucessoStatus.innerText = 'Iniciando liberação dos produtos...';
-            sucessoDestaque.innerText = 'Aguarde a máquina girar as molas ⚙️';
-            barraProgresso.style.width = '0%';
-            telaSucesso.classList.add('visivel');
-
-            await esperar(1000);
-
-            for (let idx = 0; idx < fila.length; idx++) {
-                const atual = fila[idx];
-                sucessoIcone.innerText = atual.icone;
-                sucessoTitulo.innerText = `Liberando ${idx + 1} de ${fila.length}`;
-                sucessoStatus.innerText = `${atual.nome}`;
-                barraProgresso.style.width = `${Math.round(((idx + 1) / fila.length) * 100)}%`;
-                await esperar(2200);
-            }
-
-            sucessoIcone.innerText = '🎉';
-            sucessoTitulo.innerText = 'Pedido Concluído!';
-            sucessoStatus.innerText = `${fila.length} item(ns) liberado(s) com sucesso.`;
-            sucessoDestaque.innerText = 'Retire seu pedido na gaveta abaixo 👇';
-
-            await esperar(3000);
-
-            // Limpa carrinho e volta para a vitrine atualizada
-            carrinho = [];
-            atualizarCarrinho();
-            renderizarProdutos();
-            telaSucesso.classList.remove('visivel');
-            liberandoProdutos = false;
-            reiniciarTimerInatividade();
-        }
-
-        // ============================================
-        // INICIAR
-        // ============================================
-        renderizarAbas();
-        renderizarProdutos();
-        atualizarCarrinho();
-    </script>
+    function resetToWelcome() {
+      stopPixTimer();
+      stopSuccessCountdown();
+      closeProductModal();
+      closeCartModal();
+      state.cart = [];
+      state.activeCategory = 'lanches';
+      updateCartBar();
+      showScreen('screen-welcome');
+    }
+  </script>
 </body>
 </html>
